@@ -1,0 +1,50 @@
+.login {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .login-form-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 1px 4px 6px 7px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    border-radius: 5px;
+
+    h1 {
+      text-align: center;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+
+      input, button {
+        width: 100%;
+        max-width: 400px;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 1.3em;
+        cursor: pointer;
+      }
+        &:hover {
+          height: 100%;
+        }
+      }
+    }
+  }
+
+
+/* Rendre le formulaire plus compact sur les petits écrans */
+@media screen and (max-width: 768px) {
+  .login .login-form-container {
+    padding: 1rem;
+  }
+
+  .login .login-form input, .login .login-form button {
+    font-size: 1em;
+  }
+}

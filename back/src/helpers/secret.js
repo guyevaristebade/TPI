@@ -1,1 +1,1 @@
-export const secret = 'chakôman'
+export const secret = 'ATALIANPTIBOUBACARKAMATE'

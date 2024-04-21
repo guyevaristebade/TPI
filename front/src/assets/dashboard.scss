@@ -1,0 +1,87 @@
+.dashboard{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+
+  .left{
+    .dashboard-form {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 2rem;
+
+      input {
+        outline: none;
+        border: none;
+        background-color: #cecece;
+        width: 400px;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 1.3em
+      }
+
+      select{
+        outline: none;
+        border: none;
+        background-color: #cecece;
+        width: 400px;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 1.3em
+      }
+
+      button {
+        outline: none;
+        border-radius: 5px;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        position: relative;
+        z-index: 100;
+        width: 400px;
+
+      }
+    }
+  }
+
+  .right{
+
+    .table-style{
+      border-collapse: collapse;
+      box-shadow: 0 5px 50px rgba(0,0,0,0.15);
+      cursor: pointer;
+      margin: 0px auto;
+      border: 2px solid midnightblue;
+      width: 100%;
+
+      thead{
+        tr{
+          background-color: midnightblue;
+          color: #fff;
+          text-align: left;
+          th{
+            padding: 15px 20px;
+            text-align: center;
+            border: 1px solid #333;
+          }
+
+          td{
+            padding: 15px 20px;
+            text-align: center;
+          }
+        }
+      }
+
+      tbody{
+        border: 1px solid #ddd;
+
+        tr{
+          &:nth-child(even){
+            background-color: #f3f3f3;
+          }
+        }
+      }
+    }
+  }
+}

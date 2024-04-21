@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (name, password) => {
       try{
         const response = await loginApi(name, password);
-        setUser(response.agent)
+          setUser(response.agent)
       }catch (err){
         setUser(undefined);
       }
