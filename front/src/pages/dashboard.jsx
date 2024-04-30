@@ -24,7 +24,10 @@ export const Dashboard = () => {
 
   const fetchDevices =  () => {
     getDevices()
-      .then((response) => setDevices(response))
+      .then((response) => {
+        setDevices(response.device)
+        console.log(response.device)
+      })
       .catch((e) => message.error("Failed to set devices"));
   }
 
@@ -135,7 +138,7 @@ export const Dashboard = () => {
           </tr>
           </thead>
           <tbody>
-          {devices.map(({ _id , line, brand, date,site_id , state }) => (
+          {devices && devices.map(({ _id , line, brand, date,site_id , state }) => (
             <tr key={_id}>
               <td>{line}</td>
               <td>{brand}</td>
