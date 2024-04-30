@@ -1,9 +1,9 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createSite, deleteSite, getSites} from "../api";
 import { message } from "antd";
-import {DeleteFilled} from '@ant-design/icons'
+import { DeleteFilled } from '@ant-design/icons'
 import '../assets/site.scss';
-import {useFormRef} from "../hooks";
+import { useFormRef } from "../hooks";
 
 export const Site = () => {
 
