@@ -1,49 +1,50 @@
 import React, { useState } from 'react';
+import useSignIn from 'react-auth-kit/hooks/useSignIn';
 import '../assets/login.scss';
-import { useAuth } from "../contexts";
-import { useNavigate } from "react-router-dom";
+import {message} from "antd";
+import {login} from "../api";
 
 export const Login = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
+
   const [error, setError] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [userData, setUserData] = useState({});
+  const signIn = useSignIn();
 
   const onFinish = async (e) => {
     e.preventDefault();
-    try {
-      await login(username, password);
-      navigate("/");
-    } catch (error) {
-      setError(error.message);
-    }
+    login(userData)
+      .then((response) =>{
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 30);
+
+        if(signIn({
+          auth: {
+            token: response.token,
+            type: 'Bearer',
+            expiresAt: expiresAt,
+          },
+          userState : userData
+        })){
+          message.success("Successfully signed in " + response.token)
+        }else{
+          message.error("Une erreur s'est produite dans le hook signIn")
+        }
+
+      })
+      .catch((error) => message.error("Une erreur s'est produite" + error.message));
   };
+
 
 
   const onChange = (event) => {
     const { name, value } = event.target;
-
-      switch (name) {
-        case "username":
-          setUsername(value);
-          break;
-
-        case "password":
-          setPassword(value);
-          break;
-
-
-        default:
-          break;
-      }
+    setUserData({...userData, [name]: value});
   };
 
 
   return (
     <div className="login">
       <div className="login-form-container">
-        <h1>Login</h1>
         <form className="login-form" onSubmit={onFinish}>
           <input type="text" className="login-name" placeholder="Name" name="username" onChange={onChange}/>
           <input type="password" className="login-password" placeholder="*****" name="password" onChange={onChange} />

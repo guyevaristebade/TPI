@@ -9,12 +9,10 @@ const deviceSchema = mongoose.Schema({
   brand :{
     type: String,
     required: true,
-    unique: true
   },
-  commissioning_date :{
+  date :{
     type: Date,
     required: true,
-    unique: true
   },
   site_id :{
     type: mongoose.Types.ObjectId,
@@ -22,8 +20,7 @@ const deviceSchema = mongoose.Schema({
   },
   state : {
     type: String,
-    required: true,
-    unique: true
+    required: true
   }
 })
 

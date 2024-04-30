@@ -3,56 +3,51 @@ import {createSite, deleteSite, getSites} from "../api";
 import { message } from "antd";
 import {DeleteFilled} from '@ant-design/icons'
 import '../assets/site.scss';
+import {useFormRef} from "../hooks";
 
 export const Site = () => {
 
-  const [siteName, setSiteName] = useState("");
-  const [address, setAddress] = useState("");
+  const [siteData, setSiteData] = useState({});
   const [siteList, setSiteList] = useState([]);
-  const formRef = useRef(null);
-  const resetState = () =>{
-    setAddress("");
-    setSiteName("");
-  }
+  const { formRef, resetForm } = useFormRef(); // Appelle le hook
+
+  const fetchSites = async () => {
+    try {
+      const list = await getSites();
+      setSiteList(list);
+    } catch (error) {
+      console.error("Failed to fetch sites:", error);
+    }
+  };
+
 
   const onFinish = async (e) => {
     e.preventDefault();
     try {
-      createSite(siteName, address)
+      createSite(siteData)
         .then((response ) =>{
-          resetState()
           message.success("Site created successfully")
-          formRef.current.reset();
+          fetchSites();
+          resetForm()
         })
     } catch (error) {
       message.error("Failed to create site")
     }
   };
 
-  const onChange = (event) => {
-    const { name, value } = event.target;
-    console.log('onChange', name, value);
-    switch (name) {
-      case "site_name":
-        setSiteName(value);
-        break;
-
-      case "address":
-        setAddress(value);
-        break;
-
-      default:
-        break;
-    }
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setSiteData({ ...siteData, [name]: value });
+    console.log(siteData)
   };
 
   const onDelete = async (id)=> {
     await deleteSite(id);
+    await fetchSites();
   }
 
   useEffect(() => {
-    getSites()
-      .then((list) => setSiteList(list))
+    fetchSites()
   }, []);
 
   return (

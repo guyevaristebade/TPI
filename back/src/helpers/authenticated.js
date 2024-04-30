@@ -1,19 +1,21 @@
 import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
-dotenv.config()
 
 export const authenticated = async (req, res, next) => {
-    try {
-        let token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+    let token = req.cookies['token']
 
-        if (!token) {
-            return res.status(401).send('Unauthorized');
+    if (!token) {
+        token = req.headers['bearer']
+
+        if (token === undefined) {
+            return res.status(401).send('Unauthorized')
         }
+    }
 
-        req.user = jwt.verify(token, process.env.SECRET_KEY  || '');
-        next();
+    try {
+        req.user = jwt.verify(token, process.env.SECRET_KEY || '')
+        //console.log(req)
+        next()
     } catch (err) {
-        console.error(err);
-        res.status(401).send('Unauthorized');
+        return res.status(401).send('Unauthorized')
     }
 }

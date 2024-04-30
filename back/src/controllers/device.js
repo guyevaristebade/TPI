@@ -1,78 +1,88 @@
 import { deviceModel } from "../models/index.js";
+import { sanitizeFilter } from "mongoose";
 
-export const createDevice = async (req, res) => {
+export const createDevice = async (deviceData) => {
   try {
-    const { line, brand, commissioning_date, site_id, state } = req.body;
+    const existingDevice = await deviceModel.findOne(sanitizeFilter(deviceData.line)).exec()
 
-    let device = await deviceModel.findOne({ line });
-    if (device) {
-      return res.status(400).send("Device already exists");
+    if (existingDevice) {
+      return { status : 400, message : "A device with the same date already exists" }
     }
 
-    device = new deviceModel({
-      line,
-      brand,
-      commissioning_date,
-      site_id,
-      state
+    const device = new deviceModel({
+      line : deviceData.line,
+      brand : deviceData.brand,
+      date : deviceData.date,
+      site_id : deviceData.site_id,
+      state : deviceData.state
     });
 
     await device.save();
 
-    res.status(201).send("Device created successfully");
+    return { status : 200, message : "Device created successfully" , device}
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal Server Error: " + error.message);
+    return { status : 500 , message : "Internal Server error" };
   }
 };
 
-export const deleteDevice = async (req, res) => {
-  try {
-    const { deviceId } = req.params;
 
-    const deletedDevice = await deviceModel.findByIdAndDelete(deviceId);
+export const deleteDevice = async (deviceId) => {
+  try {
+    const deletedDevice = await deviceModel.findByIdAndDelete(sanitizeFilter(deviceId));
 
     if (!deletedDevice) {
-      return res.status(404).send("Device not found");
+      return { status : 404, message : "Device not found"};
     }
 
-    res.status(200).send("Device deleted successfully");
+    return { status : 200, message : "Device deleted successfully", deletedDevice};
+
   } catch (error) {
-    res.status(500).send("Internal Server Error: ");
+    console.log(error)
+    return { status : 500, message : "Internal Server Error "};
   }
 };
 
-export const getAll = async (req, res) => {
+export const getAll = async () => {
   try{
-    const device = await deviceModel.find();
-    if(!device)
-      res.status(404).send("Device not found")
+    const device = await deviceModel.find().populate("site_id");
+    if(!device){
+      return { status : 404, message : "Device not found "};
+    }
 
-    res.status(200).send(device);
+    return { status : 200, devices : device };
   }catch (e) {
-
+    console.log(e.message)
+    return { status : 500, message : "Internal Server Error "};
   }
 }
 
 
-export const updateDevice = async (req, res) => {
+export const updateDevice = async (deviceId, deviceData) => {
   try {
-    const { id } = req.params;
-    const { line, brand, commissioning_date, site_id, state } = req.body;
+
 
     const updatedDevice = await deviceModel.findByIdAndUpdate(
-      id,
-      { line, brand, commissioning_date, site_id, state },
+      deviceId,
+      {
+        line : deviceData.line,
+        brand : deviceData.brand,
+        date : deviceData.date,
+        site_id : deviceData.site_id,
+        state : deviceData.state
+      },
       { new: true }
     );
 
     if (!updatedDevice) {
-      return res.status(404).send("Device not found");
+      return { status : 404, message : "Device not found "};
     }
 
     res.status(200).send("Device updated successfully");
+    return { status : 200, message : "Device updated successfully", updatedDevice };
+
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal Server Error: " + error.message);
+    return { status : 500, message : "Internal server error" };
   }
 };

@@ -8,3 +8,12 @@ export const createDevice = async (deviceData) =>{
     return error.response.data;
   }
 }
+
+export const getDevices = async () =>{
+  try{
+    const response = await instance.get('/device');
+    return response.data;
+  }catch (error) {
+    return error.response.data;
+  }
+}

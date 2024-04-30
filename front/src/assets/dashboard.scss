@@ -1,9 +1,15 @@
+// TODO : Mettre en place des mixins pour le style répétitif
+
 .dashboard{
+
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
 
   .left{
+    h1{
+      text-align: center;
+    }
     .dashboard-form {
       display: flex;
       justify-content: center;
@@ -79,6 +85,30 @@
         tr{
           &:nth-child(even){
             background-color: #f3f3f3;
+          }
+
+          .actions{
+            display: flex;
+            gap: 0.5rem;
+          }
+          td,{
+            border: 1px solid #333;
+            padding: 15px 20px;
+            text-align: center;
+
+            .delete{
+              border: none;
+              cursor: pointer;
+              color: #f5222d;
+              background-color: transparent;
+            }
+
+            .edit{
+              border: none;
+              cursor: pointer;
+              color: #297516;
+              background-color: transparent;
+            }
           }
         }
       }

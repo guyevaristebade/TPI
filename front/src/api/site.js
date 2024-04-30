@@ -1,8 +1,8 @@
 import { instance } from '../helpers';
 
-export const createSite = async  (site_name, address) =>{
+export const createSite = async  (siteData) =>{
   try{
-    const response = await instance.post('/site', { name : site_name, address : address });
+    const response = await instance.post('/site', siteData);
     return response.data
   }catch (error) {
     return error.response.data;

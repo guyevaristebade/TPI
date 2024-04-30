@@ -1,13 +1,13 @@
+import React from 'react';
 import { AppRouter } from "./router";
-import { AuthProvider } from "./contexts";
+import AuthProvider from "react-auth-kit";
+import {store} from "./helpers";
 
 function App() {
   return (
-    <div className="App">
-      <AuthProvider>
+    <AuthProvider store={store}>
         <AppRouter/>
-      </AuthProvider>
-    </div>
+    </AuthProvider>
   );
 }
 export default App;

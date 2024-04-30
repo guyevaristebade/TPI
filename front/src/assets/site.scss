@@ -82,13 +82,15 @@
           }
 
           td{
+            border: 1px solid #333;
             padding: 15px 20px;
             text-align: center;
+
             button{
-              border : none;
-              background-color: transparent;
+              border: none;
               cursor: pointer;
-              width: 100%;
+              color: #f5222d;
+              background-color: transparent;
             }
           }
         }
