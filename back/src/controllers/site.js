@@ -39,11 +39,11 @@ export const deleteSite = async (_id) => {
 
     if (!deviceToDelete) {
       await siteModel.findByIdAndDelete(_id);
-      return { status : 200, message : "Device not found but Site deleted successfully" }
-    }
+    }else{
+      await deviceModel.findByIdAndDelete(deviceToDelete._id);
+      await siteModel.findByIdAndDelete(_id);
 
-    await deviceModel.findByIdAndDelete(deviceToDelete._id);
-    await siteModel.findByIdAndDelete(_id);
+    }
 
     return { status : 200 , message : "Site deleted successfully" };
 
