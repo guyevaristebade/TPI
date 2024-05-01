@@ -49,7 +49,7 @@ export const deleteSite = async (_id) => {
 
   } catch (error) {
     console.error(error.message);
-    return { status : 500 , message : "Internal server Error" };
+    return { status : 500 , message : `Internal server Error ${error.message}` };
   }
 };
 
