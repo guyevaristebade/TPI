@@ -9,10 +9,23 @@ siteRouter.post("/", async (req, res) =>{
   if(result.status !== 200){
     res.status(result.status).json({ message: result.message });
   }
+
+  res.status(result.status).json({ message: result.message });
+
 });
 
 siteRouter.get("/", getSites);
 
-siteRouter.delete("/:id", deleteSite)
+siteRouter.delete("/:id", async (req, res) => {
+  const { id } = req.params
+  const result = await deleteSite(id);
+
+  if(result.status !== 200){
+    res.status(result.status).json({ message: result.message });
+  }
+
+  res.status(result.status).json({ message: result.message });
+
+})
 
 siteRouter.put("/:siteId", updateSite)
