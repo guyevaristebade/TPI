@@ -27,23 +27,23 @@ export const createSite = async (siteData) => {
  * Cette fonction permet de supprimer un site
  * Elle supprime aussi le ou les PTI associé au site
  * */
-export const deleteSite = async (id) => {
+export const deleteSite = async (_id) => {
   try {
-    const siteToDelete = await siteModel.findById(id);
+    const siteToDelete = await siteModel.findById(_id);
 
     if (!siteToDelete) {
       return { status : 404, message : "Site not found" }
     }
 
-    const deviceToDelete = await deviceModel.findOne({ site_id: id });
+    const deviceToDelete = await deviceModel.findOne({ site_id: _id });
 
     if (!deviceToDelete) {
-      await siteModel.findByIdAndDelete(id);
+      await siteModel.findByIdAndDelete(_id);
       return { status : 200, message : "Device not found but Site deleted successfully" }
     }
 
     await deviceModel.findByIdAndDelete(deviceToDelete._id);
-    await siteModel.findByIdAndDelete(id);
+    await siteModel.findByIdAndDelete(_id);
 
     return { status : 200 , message : "Site deleted successfully" };
 
