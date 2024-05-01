@@ -32,7 +32,7 @@ export const deleteSite = async (id) => {
     const siteToDelete = await siteModel.findById(id);
 
     if (!siteToDelete) {
-      return { status : 404, message : "Device not found" }
+      return { status : 404, message : "Site not found" }
     }
 
     const deviceToDelete = await deviceModel.findOne({ site_id: id });
