@@ -17,8 +17,8 @@ siteRouter.post("/", async (req, res) =>{
 siteRouter.get("/", getSites);
 
 siteRouter.delete("/:id", async (req, res) => {
-  const { id } = req.params
-  const result = await deleteSite(id);
+  const id  = req.params
+  const result= await deleteSite(id);
 
   if(result.status !== 200){
     res.status(result.status).json({ message: result.message });
