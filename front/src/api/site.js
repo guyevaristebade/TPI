@@ -23,6 +23,7 @@ export const deleteSite = async (_id) =>{
 export const getSites = async () =>{
   try{
     const response = await instance.get('/site');
+    console.log(response)
     return response.data
   }catch (error) {
     return error.response.data;

@@ -1,6 +1,16 @@
 import express from "express";
-import {createSite, deleteSite, getSites, updateSite} from "../controllers/index.js";
+import { createSite, deleteSite, getSites, updateSite } from "../controllers/index.js";
 export const siteRouter = express.Router();
+
+siteRouter.get('/', async (req, res) => {
+  const result = await getSites();
+
+  if (result.status !== 200) {
+    return res.status(result.status).json({ message: result.message})
+  }else{
+    res.status(result.status).json({sites : result.data })
+  }
+});
 
 // create site
 siteRouter.post("/", async (req, res) => {
@@ -16,8 +26,6 @@ siteRouter.post("/", async (req, res) => {
 });
 
 
-
-siteRouter.get("/", getSites);
 
 
 siteRouter.delete("/:siteId", async (req, res) => {

@@ -16,8 +16,7 @@ export const createSite = async (siteData) => {
     return { status : 201, message : "Site created successfully" }
 
   } catch (error) {
-    console.error(error.message);
-    return { status : 500, message : "Internal server error" }
+    return { status : 500 , message : `Internal server Error. Veuillez contacter l'administrateur du site ` };
   }
 };
 
@@ -47,39 +46,43 @@ export const deleteSite = async (_id) => {
 
   } catch (error) {
     console.error(error.message);
-    return { status : 500 , message : `Internal server Error ${error.message}` };
+    return { status : 500 , message : `Internal server Error. Veuillez contacter l'administrateur du site  ` };
   }
 };
 
 
-export const getSites = async (req, res) => {
+export const getSites = async () => {
   try {
     const sites = await siteModel.find();
-    res.status(200).json(sites);
+
+    if(!sites) {
+      return { status : 200 , message : "No Sites found", sites };
+    }
+    return { status : 200, data : sites }
+
   } catch (error) {
-    res.status(500).send("Internal Server Error: " + error.message);
+    return { status : 500 , message : `Internal server Error. Veuillez contacter l'administrateur du site ` };
   }
 }
 
 
-export const updateSite = async (req, res) => {
+export const updateSite = async (siteId, siteData) => {
   try {
-    const { siteId } = req.params;
-    const { site_name, address } = req.body;
 
     const updatedSite = await siteModel.findByIdAndUpdate(
       siteId,
-      { site_name, address},
+      { site_name : siteData.site_name, address : siteData.address},
       { new: true }
     );
 
-    if (!updatedSite) return res.status(404).json({message : "Site not found"});
+    if (!updatedSite) {
+      return { status : 404, message : 'Site not found' };
+    }
 
-    res.status(200).json({message : "Site updated successfully"});
+    return { status : 200, message : 'Site updated' };
 
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message : "Internal Server Error" });
+    return { status : 500 , message : `Internal server Error. Veuillez contacter l'administrateur du site ` };
   }
 };
 

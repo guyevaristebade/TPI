@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-//import { useNavigate } from 'react-router-dom';
 import {createDevice, deleteDevice as deleteDeviceApi , getDevices, getSites} from '../api';
 import '../assets/dashboard.scss';
 import {formatDate, validatePhoneNumber} from "../helpers";
@@ -10,15 +9,15 @@ import {DeleteFilled, EditFilled} from "@ant-design/icons";
 export const Dashboard = () => {
   const { user } = useAuth();
   const [siteList, setSiteList] = useState([])
-  const [site, setSite] = useState('');
-  const [state, setState] = useState('');
   const [devices, setDevices] = useState([]);
   const [deviceData, setDeviceData] = useState({});
-  const { formRef, resetForm } = useFormRef(); // Appelle le hook
+  const { formRef, resetForm } = useFormRef();
 
   const fetchSites =  () => {
     getSites()
-      .then((list) => setSiteList(list))
+      .then((response) => {
+        setSiteList(response.sites)
+      })
       .catch((error) => message.error(error.message))
   };
 
@@ -26,7 +25,6 @@ export const Dashboard = () => {
     getDevices()
       .then((response) => {
         setDevices(response.device)
-        console.log(response.device)
       })
       .catch((e) => message.error("Failed to set devices"));
   }
@@ -46,7 +44,7 @@ export const Dashboard = () => {
 
     const { line } = deviceData;
     if (!validatePhoneNumber(line)) {
-       message.error('Numéro de téléphone invalide');
+       message.error('Phone number is not valid !!!');
       return;
     }
 
@@ -57,7 +55,7 @@ export const Dashboard = () => {
         resetForm()
       })
       .catch((error) => {
-        message.error('Failed to create device: ', error.message);
+        message.error('Failed to create device !!!');
       })
   };
 
@@ -68,7 +66,7 @@ export const Dashboard = () => {
         fetchDevices()
       })
       .catch((error) => {
-        message.error("Une erreur s'est produite " + error)
+        message.error("Error deleting device !!!")
       })
   }
 

@@ -19,9 +19,10 @@ export const createDevice = async (deviceData) => {
 
     await device.save();
 
-    return { status : 200, message : "Device created successfully" , device}
+    return { status : 200, message : "Device created successfully"}
+
   } catch (error) {
-    console.error(error.message);
+
     return { status : 500 , message : `Internal Server error ${error.message}` };
   }
 };
@@ -35,24 +36,23 @@ export const deleteDevice = async (deviceId) => {
       return { status : 404, message : "Device not found"};
     }
 
-    return { status : 200, message : "Device deleted successfully", deletedDevice};
+    return { status : 200, message : "Device deleted successfully" };
 
   } catch (error) {
-    console.log(error)
     return { status : 500, message : "Internal Server Error "};
   }
 };
 
-export const getAll = async () => {
+export const getDevices = async () => {
   try{
     const device = await deviceModel.find().populate("site_id");
+
     if(!device){
       return { status : 404, message : "Device not found "};
     }
 
-    return { status : 200, devices : device };
+    return { status : 200, data : device };
   }catch (e) {
-    console.log(e.message)
     return { status : 500, message : "Internal Server Error "};
   }
 }
@@ -60,7 +60,6 @@ export const getAll = async () => {
 
 export const updateDevice = async (deviceId, deviceData) => {
   try {
-
 
     const updatedDevice = await deviceModel.findByIdAndUpdate(
       deviceId,
@@ -78,11 +77,9 @@ export const updateDevice = async (deviceId, deviceData) => {
       return { status : 404, message : "Device not found "};
     }
 
-    res.status(200).send("Device updated successfully");
-    return { status : 200, message : "Device updated successfully", updatedDevice };
+    return { status : 200, message : "Device updated successfully" };
 
   } catch (error) {
-    console.error(error.message);
     return { status : 500, message : "Internal server error" };
   }
 };

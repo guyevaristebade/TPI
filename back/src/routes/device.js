@@ -1,5 +1,5 @@
 import express from 'express';
-import {createDevice, deleteDevice, getAll, updateDevice} from "../controllers/index.js";
+import {createDevice, deleteDevice, getDevices, updateDevice} from "../controllers/index.js";
 
 export const deviceRouter = express.Router();
 
@@ -27,7 +27,7 @@ deviceRouter.delete('/:deviceId',async (req, res) => {
 });
 
 deviceRouter.put('/:deviceId',async (req, res) => {
-  const deviceId = req.params;
+  const { deviceId } = req.params;
   const deviceData = req.body;
   const result = await updateDevice(deviceId, deviceData);
 
@@ -39,11 +39,11 @@ deviceRouter.put('/:deviceId',async (req, res) => {
 });
 
 deviceRouter.get('/', async (req, res) => {
-  const result = await getAll();
+  const result = await getDevices();
 
   if (result.status !== 200) {
     return res.status(result.status).json({ message: result.message})
   }else{
-    res.status(result.status).json({ message: result.message, device : result.devices })
+    res.status(result.status).json({ device : result.data })
   }
 });
