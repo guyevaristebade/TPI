@@ -32,8 +32,9 @@ deviceRouter.put('/:deviceId',async (req, res) => {
 
   if (result.status !== 200) {
     return res.status(result.status).json({ message: result.message})
+  }else{
+      res.status(result.status).json({ message: result.message, updatedDevice : result.updatedDevice})
   }
-  res.status(result.status).json({ message: result.message, updatedDevice : result.updatedDevice})
 });
 
 deviceRouter.get('/', async (req, res) => {
@@ -41,6 +42,7 @@ deviceRouter.get('/', async (req, res) => {
 
   if (result.status !== 200) {
     return res.status(result.status).json({ message: result.message})
+  }else{
+    res.status(result.status).json({ message: result.message, device : result.devices })
   }
-  res.status(result.status).json({ message: result.message, device : result.devices })
 });

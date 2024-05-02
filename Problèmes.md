@@ -95,3 +95,19 @@ export const deleteUser = async (_id) => {
 
 ### Remarque 
 Faire attention au paramètre qu'on utilise dans les différentes fonctions qu'offre mongoose
+
+
+
+### Problème 
+
+```textplaint
+
+node:_http_outgoing:696
+    throw new ERR_HTTP_HEADERS_SENT('set');
+          ^
+
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+
+  code: 'ERR_HTTP_HEADERS_SENT'
+
+```

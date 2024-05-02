@@ -13,7 +13,6 @@ export const createSite = async (siteData) => {
 
     await site.save();
 
-    res.status(201).send("Site created successfully");
     return { status : 201, message : "Site created successfully" }
 
   } catch (error) {
@@ -42,7 +41,6 @@ export const deleteSite = async (_id) => {
     }else{
       await deviceModel.findByIdAndDelete(deviceToDelete._id);
       await siteModel.findByIdAndDelete(_id);
-
     }
 
     return { status : 200 , message : "Site deleted successfully" };
