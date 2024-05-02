@@ -17,3 +17,13 @@ export const getDevices = async () =>{
     return error.response.data;
   }
 }
+
+
+export const deleteDevice = async (id) =>{
+  try{
+    const response = await instance.delete(`/device/${id}`);
+    return response.data;
+  }catch (error) {
+    return error.message;
+  }
+}

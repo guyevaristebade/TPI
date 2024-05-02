@@ -9,13 +9,14 @@ deviceRouter.post('/', async (req, res) => {
 
   if (result.status !== 200) {
     return res.status(result.status).json({ message: result.message });
+  }else{
+    res.status(result.status).json({ message: result.message})
   }
 
-  res.status(result.status).json({ message: result.message})
 });
 
 deviceRouter.delete('/:deviceId',async (req, res) => {
-  const deviceId = req.params
+  const { deviceId } = req.params
   const result = await deleteDevice(deviceId)
 
   if (result.status !== 200) {

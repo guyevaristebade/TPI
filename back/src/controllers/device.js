@@ -3,7 +3,7 @@ import { sanitizeFilter } from "mongoose";
 
 export const createDevice = async (deviceData) => {
   try {
-    const existingDevice = await deviceModel.findOne(sanitizeFilter(deviceData.line)).exec()
+    const existingDevice = await deviceModel.findOne(sanitizeFilter({ line : deviceData.line })).exec()
 
     if (existingDevice) {
       return { status : 400, message : "A device with the same date already exists" }
@@ -22,7 +22,7 @@ export const createDevice = async (deviceData) => {
     return { status : 200, message : "Device created successfully" , device}
   } catch (error) {
     console.error(error.message);
-    return { status : 500 , message : "Internal Server error" };
+    return { status : 500 , message : `Internal Server error ${error.message}` };
   }
 };
 

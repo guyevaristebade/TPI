@@ -91,17 +91,17 @@
             display: flex;
             gap: 0.5rem;
           }
-          td,{
+          td{
             border: 1px solid #333;
             padding: 15px 20px;
             text-align: center;
 
-            .delete{
+            /*.delete{
               border: none;
               cursor: pointer;
               color: #f5222d;
               background-color: transparent;
-            }
+            }*/
 
             .edit{
               border: none;

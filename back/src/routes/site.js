@@ -21,7 +21,7 @@ siteRouter.get("/", getSites);
 
 
 siteRouter.delete("/:siteId", async (req, res) => {
-  const siteId  = req.params.siteId;
+  const { siteId }  = req.params;
   const result= await deleteSite(siteId);
 
   if(result.status !== 200){

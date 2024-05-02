@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 //import { useNavigate } from 'react-router-dom';
-import {createDevice, getDevices, getSites} from '../api';
+import {createDevice, deleteDevice as deleteDeviceApi , getDevices, getSites} from '../api';
 import '../assets/dashboard.scss';
 import {formatDate, validatePhoneNumber} from "../helpers";
 import {message} from "antd";
@@ -59,15 +59,18 @@ export const Dashboard = () => {
       .catch((error) => {
         message.error('Failed to create device: ', error.message);
       })
-    /*try {
-      const response = await createDevice(deviceData);
-      message.success("Device registered successfully");
-      fetchDevices()
-    } catch (error) {
-      message.error(error.message);
-      console.error('Failed to create device:', error.message);
-    }*/
   };
+
+  const deleteDevice = (id) => {
+    deleteDeviceApi(id)
+      .then(() => {
+        message.success("device deleted successfully")
+        fetchDevices()
+      })
+      .catch((error) => {
+        message.error("Une erreur s'est produite " + error)
+      })
+  }
 
 
   useEffect(() => {
@@ -146,8 +149,7 @@ export const Dashboard = () => {
               <td>{site_id.site_name}</td>
               <td>{state}</td>
               <td className="actions">
-                <button className="delete">{<DeleteFilled/>}</button>
-                <button className="edit">{<EditFilled/>}</button>
+                <button onClick={(e) => deleteDevice(_id)} className="delete">{<DeleteFilled/>}</button>
               </td>
             </tr>
           ))}
