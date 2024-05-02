@@ -107,7 +107,7 @@ export const Dashboard = () => {
           />
           <select className="site" name="site_id" onChange={onSelectChange}>
             <option value="">Choississez</option>
-            {siteList.map(({ _id, site_name }) => (
+            {siteList && siteList.map(({ _id, site_name }) => (
               <option key={_id} value={_id}>
                 {site_name}
               </option>
