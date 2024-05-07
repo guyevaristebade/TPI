@@ -36,3 +36,17 @@ export const confirmationValidators = (password, confirmation) => [
         message: 'Password and confirmation are not the same',
     },
 ]
+
+export const invoiceFileFilter = (file) => {
+
+    const authorizedFileType = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp']
+
+    if (!authorizedFileType.includes(file.mimetype)) {
+        return {
+            status: 400,
+            error: 'Invalid file type',
+        }
+    }
+
+    return { status : 200, data : "authorizedFileType"}
+}

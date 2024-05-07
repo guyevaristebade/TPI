@@ -7,7 +7,7 @@ import { siteRouter, agentRouter, deviceRouter } from "./routes/index.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 
 await connectDB();
 

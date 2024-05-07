@@ -14,7 +14,7 @@ export const Site = () => {
   const fetchSites = async () => {
     try {
       const list = await getSites();
-      setSiteList(list);
+      setSiteList(list.sites);
     } catch (error) {
       console.error("Failed to fetch sites:", error);
     }

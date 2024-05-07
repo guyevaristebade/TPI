@@ -16,6 +16,7 @@ export const Dashboard = () => {
   const fetchSites =  () => {
     getSites()
       .then((response) => {
+        console.log(response.sites, " testtet")
         setSiteList(response.sites)
       })
       .catch((error) => message.error(error.message))
@@ -107,7 +108,7 @@ export const Dashboard = () => {
           />
           <select className="site" name="site_id" onChange={onSelectChange}>
             <option value="">Choississez</option>
-            {siteList && siteList.map(({ _id, site_name }) => (
+            {siteList.length > 0 && siteList.map(({ _id, site_name }) => (
               <option key={_id} value={_id}>
                 {site_name}
               </option>
