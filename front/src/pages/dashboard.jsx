@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {createDevice, deleteDevice as deleteDeviceApi , getDevices, getSites} from '../api';
+import { createDevice, deleteDevice as deleteDeviceApi , getDevices, getSites } from '../api';
+import { formatDate, validatePhoneNumber } from "../helpers";
+import { useAuth, useFormRef } from "../hooks";
+import { useNavigate } from "react-router-dom";
+import { DeleteFilled } from "@ant-design/icons";
+import { message } from "antd";
 import '../assets/dashboard.scss';
-import {formatDate, validatePhoneNumber} from "../helpers";
-import {message} from "antd";
-import {useAuth, useFormRef} from "../hooks";
-import {DeleteFilled, EditFilled} from "@ant-design/icons";
 
 export const Dashboard = () => {
   const { user } = useAuth();
@@ -12,11 +13,12 @@ export const Dashboard = () => {
   const [devices, setDevices] = useState([]);
   const [deviceData, setDeviceData] = useState({});
   const { formRef, resetForm } = useFormRef();
+  const navigate = useNavigate();
+
 
   const fetchSites =  () => {
     getSites()
       .then((response) => {
-        console.log(response.sites, " testtet")
         setSiteList(response.sites)
       })
       .catch((error) => message.error(error.message))
@@ -75,6 +77,13 @@ export const Dashboard = () => {
   useEffect(() => {
     fetchSites()
     fetchDevices()
+  }, []);
+
+
+  useEffect(() => {
+    if (user?.user === undefined) {
+      navigate("/login");
+    }
   }, [user]);
 
 

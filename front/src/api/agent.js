@@ -11,8 +11,7 @@ export const login = async (userData) =>{
 
 export const isLoggedIn = async () => {
   try {
-    const response = await instance.get("/auth/");
-    console.log(response, "isloggedIn c'est moi ")
+    const response = await instance.get("/auth/is-logged-in");
     return response.data;
   } catch (error) {
     return error.response.data;

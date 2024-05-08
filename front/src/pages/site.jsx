@@ -44,10 +44,11 @@ export const Site = () => {
   const onDelete = async (id)=> {
     await deleteSite(id);
     await fetchSites();
+    message.success("Site deleted successfully")
   }
 
   useEffect(() => {
-    fetchSites()
+    fetchSites();
   }, []);
 
   return (
