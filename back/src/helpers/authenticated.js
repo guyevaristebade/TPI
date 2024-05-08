@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 export const authenticated = async (req, res, next) => {
-    let token = req.cookies['token']
+    let token = req.cookies['token-auth']
 
     if (!token) {
         token = req.headers['bearer']
@@ -13,9 +13,10 @@ export const authenticated = async (req, res, next) => {
 
     try {
         req.user = jwt.verify(token, process.env.SECRET_KEY || '')
-        //console.log(req)
+
         next()
     } catch (err) {
-        return res.status(401).send('Unauthorized')
+        return res.status(401
+        ).send('Unauthorized')
     }
 }

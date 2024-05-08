@@ -3,11 +3,11 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import cookieParser from "cookie-parser";
 import { connectDB } from "./helpers/index.js";
-import { siteRouter, agentRouter, deviceRouter } from "./routes/index.js";
+import {siteRouter, agentRouter, deviceRouter} from "./routes/index.js";
 dotenv.config();
 
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 3001;
 
 await connectDB();
 
