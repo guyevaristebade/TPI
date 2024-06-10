@@ -17,6 +17,7 @@ export const getFile = async  (fileId) => {
     file.data = CryptoJS.AES.decrypt(file.data, key).toString(CryptoJS.enc.Utf8);
 
     return { status : 200, data : file }
+    
   }catch (e) {
     return { status : 500, message : "internal server error"}
   }

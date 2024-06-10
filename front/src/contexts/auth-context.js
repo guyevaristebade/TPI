@@ -1,91 +1,44 @@
 import React, { useEffect, useState } from "react";
-
 import {
   isLoggedIn,
   login as loginApi,
   logout as logoutApi,
 } from "../api";
-import { useQuery } from "../hooks";
 
-import { useLocation, useNavigate } from "react-router-dom";
-import { Spin } from "antd";
-
-const initState = {
-  user: undefined,
-};
-
-export const AuthenticationContext = React.createContext({
-  ...initState,
-  login: () => {},
-  logout: () => {},
-});
+export const AuthenticationContext = React.createContext();
 
 export const AuthenticationProvider = ({ children }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const query = useQuery();
-  const [authState, setAuthState] = useState(initState);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(undefined);
 
-  const redirect = () => {
-    navigate(query.get("redirect_uri") || "/");
+  const login =  (userData) => {
+    return loginApi(userData)
+      .then((data) => {
+        setUser(data.user);
+      })
+      .catch((error) => {
+        setUser(undefined);
+        throw error;
+      });
   };
 
-  const login = async (userData) => {
-    try {
-      const userLogin = await loginApi(userData);
-      setAuthState({ user: userLogin });
-      redirect();
-      return userLogin;
-    } catch (error) {
-      setAuthState({ user: undefined });
-    }
-  };
-
-  const logout = () => {
-    logoutApi().then(() => {
-      setAuthState(initState);
-      navigate("/login");
-    });
+  const logout = async () => {
+    await logoutApi()
+    setUser(undefined);
   };
 
   useEffect(() => {
     isLoggedIn()
-      .then((user) => {
+      .then((data) => {
         if (user === "Unauthorized") throw new Error("Unauthorized");
-
-        setAuthState({ user });
-
-        if (location.pathname === "/login") {
-          redirect();
-        }
+        setUser(data.user);
       })
-      .catch((error) => {
-        setAuthState({ user: undefined });
-
-        if (!location.pathname.match(/^(\/|\/login|\/register)$/)) {
-          navigate(`/login?redirect_uri=${encodeURI(location.pathname)}`);
-        }
+      .catch(() => {
+        setUser(undefined);
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (location.pathname === "/logout") {
-      logout();
-    }
-  }, [location]);
-
-  if (isLoading) {
-    return <Spin fullscreen={true} spinning={true} size={"large"} />;
-  }
+  },[]);
 
   return (
-    <AuthenticationContext.Provider
-      value={{ ...authState, login, logout }}
-    >
+    <AuthenticationContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthenticationContext.Provider>
   );

@@ -1,13 +1,13 @@
 import React from 'react';
 import '../assets/header.scss';
 import {Link, useNavigate} from 'react-router-dom'
-import {logout} from "../api";
-//import {useAgentAuth} from "../hooks";
+import { useAuth} from "../hooks";
 
 export const Header = () => {
 
-  //const { user } = useAgentAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
+
 
   const onLogout = async () => {
     await logout();

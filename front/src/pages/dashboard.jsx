@@ -8,6 +8,7 @@ import { message } from "antd";
 import '../assets/dashboard.scss';
 
 export const Dashboard = () => {
+
   const { user } = useAuth();
   const [siteList, setSiteList] = useState([])
   const [devices, setDevices] = useState([]);
@@ -47,7 +48,7 @@ export const Dashboard = () => {
 
     const { line } = deviceData;
     if (!validatePhoneNumber(line)) {
-       message.error('Phone number is not valid !!!');
+      message.error('Phone number is not valid !!!');
       return;
     }
 
@@ -81,7 +82,7 @@ export const Dashboard = () => {
 
 
   useEffect(() => {
-    if (user?.user === undefined) {
+    if (user === undefined) {
       navigate("/login");
     }
   }, [user]);

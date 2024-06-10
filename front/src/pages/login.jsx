@@ -1,44 +1,63 @@
-import React, { useState } from 'react';
-import '../assets/login.scss';
-import {message} from "antd";
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks";
+import { Form, Input, Button, message, Typography } from 'antd';
 
+const { Title } = Typography
 export const Login = () => {
-
   const [error, setError] = useState("");
   const [userData, setUserData] = useState({});
   const navigate = useNavigate();
-  const { login } = useAuth()
-  const onFinish = async (e) => {
-    e.preventDefault();
-    login(userData)
-      .then((u) =>{
-        navigate("/")
-        message.success("Success de la connexion");
+  const { login, user } = useAuth();
+
+  const onFinish = (values) => {
+    login(values)
+      .then(() => {
         navigate("/");
       })
-      .catch((error) => message.error("Une erreur s'est produite" + error.message));
+      .catch(() => {
+        message.error("Login failed");
+        navigate("/login");
+      });
   };
 
-
-
-  const onChange = (event) => {
-    const { name, value } = event.target;
-    setUserData({...userData, [name]: value});
-  };
-
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   return (
-    <div className="login">
-      <div className="login-form-container">
-        <form className="login-form" onSubmit={onFinish}>
-          <input type="text" className="login-name" placeholder="Name" name="name" onChange={onChange}/>
-          <input type="password" className="login-password" placeholder="*****" name="password" onChange={onChange} />
-          <button type="submit" className="login-btn">Enregistrer</button>
-        </form>
-        <p className="error">{error ? error : ""}</p>
-      </div>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection : 'column' }}>
+      <Title style={{ textAlign : 'center'}}>Login</Title>
+      <Form
+        name="login_form"
+        onFinish={onFinish}
+        style={{ maxWidth: '300px', width: '100%', boxShadow: '' }}
+      >
+        <Form.Item
+          name="name"
+          rules={[{ required: true, message: 'Please input your Name!' }]}
+        >
+          <Input placeholder="Name" />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: 'Please input your Password!' }]}
+        >
+          <Input.Password placeholder="Password" />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+            Enregistrer
+          </Button>
+        </Form.Item>
+        {error && (
+          <Form.Item>
+            <p style={{ color: 'red' }}>{error}</p>
+          </Form.Item>
+        )}
+      </Form>
     </div>
   );
 };

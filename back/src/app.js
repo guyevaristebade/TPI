@@ -3,7 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import cookieParser from "cookie-parser";
 import { connectDB } from "./helpers/index.js";
-import {siteRouter, agentRouter, deviceRouter} from "./routes/index.js";
+import {siteRouter, userRouter, deviceRouter} from "./routes/index.js";
 dotenv.config();
 
 const app = express();
@@ -13,11 +13,14 @@ await connectDB();
 
 
 app.use(cookieParser());
-app.use(cors());
 app.use(express.json());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
 
 app.use('/api/site', siteRouter);
-app.use('/api/auth', agentRouter);
+app.use('/api/auth', userRouter);
 app.use('/api/device', deviceRouter);
 
 app.listen(PORT, () => {
