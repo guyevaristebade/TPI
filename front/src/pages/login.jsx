@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks";
 import { Form, Input, Button, message, Typography } from 'antd';
 
 const { Title } = Typography
 export const Login = () => {
-  const [error, setError] = useState("");
-  const [userData, setUserData] = useState({});
   const navigate = useNavigate();
   const { login, user } = useAuth();
 
@@ -52,11 +50,6 @@ export const Login = () => {
             Enregistrer
           </Button>
         </Form.Item>
-        {error && (
-          <Form.Item>
-            <p style={{ color: 'red' }}>{error}</p>
-          </Form.Item>
-        )}
       </Form>
     </div>
   );

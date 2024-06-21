@@ -1,13 +1,12 @@
 # Cahier des charges fonctionnel
 
 ## CONTEXTE
-Le client de ce projet, Monsieur KAMATE, fait face à des difficultés récurrentes concernant le suivi et l'enregistrement des Postes de Travail Informatiques (PTI) utilisés par lui-même et son équipe dans le cadre de leurs activités professionnelles quotidiennes. Ces appareils sont essentiels pour l'exécution efficace de leurs missions.
+
+Le client de ce projet, Monsieur KAMATE, fait face à des difficultés récurrentes concernant le suivi et l'enregistrement des Postes de Travail Informatiques (PTI) utilisés par ses équipes et lui dans le cadre de leurs activités professionnelles quotidiennes. Ces appareils sont essentiels pour l'exécution efficace de leurs missions.
 
 Afin de résoudre ces problèmes de gestion et de suivi, Monsieur KAMATE souhaite mettre en place un système sous forme d'annuaire numérique. Ce système permettra de centraliser et de structurer les informations relatives aux différents PTI utilisés au sein de son équipe. L'objectif principal de ce projet est de faciliter l'accès à l'information et d'améliorer la gestion quotidienne des ressources informatiques, afin d'optimiser les processus de travail et d'augmenter la productivité de l'équipe.
 
-Remarque : L'application nécessite une authentification pour être utilisée par les agents
-
-L'application est destiné aux agents de sécurité utilisant PTI.
+L'application est destiné aux agents de sécurité utilisant ou en charge PTI.
 
 
 ## ETUDE DETAILLEE DES OBJECTIFS (ANALYSE DES BESOINS)
@@ -17,6 +16,8 @@ L'objectif principal est de développer une application complète et sécuriser 
 
 ## CONTRAINTES ET DELAIS
 
+L'application nécessite une authentification
+L'application doit-être sécurisé
 
 ## Fonctionnalités
 
@@ -29,15 +30,30 @@ W : won't have this time but would like in the future, ne sera pas fait cette fo
 
 
 ### MUST
-- Créer des comptes pour les agents
-- Enregistrer un PTI
+
+- Créer un PTI
 - Consulter la liste des PTI
+- Créer un site 
+- Consulter la liste des sites 
 - Générer des PDF avec la liste des PTI
 
 ### SHOULD
 
+Coin statistique sur le dashboard:
+
+  - Afficher le nombre total de site 
+  - Afficher le nombre total de PTI
+  - Afficher le nombre d'agent qui peuvent utiliser l'application 
+
+
 ### COULD
+
+- Graphique pour la répartition des PTI par site 
 
 ### WONT
 
+- L'utilisateur doit pouvoir se connecter
+- Afficher le nombre de PTI suivant chaque état disponible ( par exemple il y a combien de PTI en Bon état etc.....)
+- Lister les agents qui sont inscrit sur l'application
+- Créer des comptes pour les autres agents (droit réservé à l'utilisateur avec le plus haut privilège)
 

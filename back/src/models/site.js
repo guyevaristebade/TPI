@@ -9,6 +9,8 @@ const siteSchema = mongoose.Schema({
     type: String,
     required: true,
   }
+},{
+  timestamps : true
 });
 
 export const siteModel = mongoose.model('site',siteSchema);

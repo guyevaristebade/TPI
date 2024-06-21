@@ -1,7 +1,6 @@
 import { User } from "../models/index.js";
 import { passwordValidators } from "../helpers/index.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { sanitizeFilter } from 'mongoose';
 
 export const register = async (userData) => {
@@ -50,7 +49,6 @@ export const deleteUser = async (_id) => {
         status : 200
     }
 
-
     try {
         const agent = await User.findOneAndDelete(sanitizeFilter({ _id }));
         if (!agent) {
@@ -69,6 +67,10 @@ export const deleteUser = async (_id) => {
 };
 
 export const getAllAgents = async () => {
+    let response = {
+        status : 200
+    }
+
     try {
         let agents = await User.find({});
         
@@ -109,3 +111,5 @@ export const isLoggedIn = (req, res, next) => {
 
     return res.status(response.status).send(response.data || response.error);
 };
+
+

@@ -1,170 +1,100 @@
 import React, { useEffect, useState } from 'react';
-import { createDevice, deleteDevice as deleteDeviceApi , getDevices, getSites } from '../api';
-import { formatDate, validatePhoneNumber } from "../helpers";
-import { useAuth, useFormRef } from "../hooks";
-import { useNavigate } from "react-router-dom";
-import { DeleteFilled } from "@ant-design/icons";
-import { message } from "antd";
-import '../assets/dashboard.scss';
+import {Card, Col, Row, Statistic, Typography} from "antd";
+import {getRepartition, getStatistics} from "../api";
+import ReactApexChart from 'react-apexcharts';
 
+const { Title }  = Typography;
+
+// TODO: Mettre en place des statistiques lié au sites, etc.....
 export const Dashboard = () => {
+  const [stats, setStats] = useState({})
+  const [options, setOptions] = useState({})
+  const [repartition, setRepartition] = useState([])
 
-  const { user } = useAuth();
-  const [siteList, setSiteList] = useState([])
-  const [devices, setDevices] = useState([]);
-  const [deviceData, setDeviceData] = useState({});
-  const { formRef, resetForm } = useFormRef();
-  const navigate = useNavigate();
-
-
-  const fetchSites =  () => {
-    getSites()
-      .then((response) => {
-        setSiteList(response.sites)
-      })
-      .catch((error) => message.error(error.message))
-  };
-
-  const fetchDevices =  () => {
-    getDevices()
-      .then((response) => {
-        setDevices(response.device)
-      })
-      .catch((e) => message.error("Failed to set devices"));
-  }
-
-  const onInputChange = (e) => {
-    const { name, value } = e.target;
-    setDeviceData({ ...deviceData, [name]: value });
-  };
-
-  const onSelectChange = (e) => {
-    const { name, value } = e.target;
-    setDeviceData({ ...deviceData, [name]: value });
-  };
-
-  const onFinish = async (e) => {
-    e.preventDefault();
-
-    const { line } = deviceData;
-    if (!validatePhoneNumber(line)) {
-      message.error('Phone number is not valid !!!');
-      return;
-    }
-
-    createDevice(deviceData)
-      .then(()=>{
-        message.success("Device registered successfully");
-        fetchDevices()
-        resetForm()
-      })
-      .catch((error) => {
-        message.error('Failed to create device !!!');
-      })
-  };
-
-  const deleteDevice = (id) => {
-    deleteDeviceApi(id)
-      .then(() => {
-        message.success("device deleted successfully")
-        fetchDevices()
-      })
-      .catch((error) => {
-        message.error("Error deleting device !!!")
-      })
-  }
 
 
   useEffect(() => {
-    fetchSites()
-    fetchDevices()
-  }, []);
+    getStatistics()
+      .then((data) =>{
+        setStats(data)
+      })
+      .catch()
 
+    getRepartition()
+      .then((data) => {
+        setRepartition(data)
+      })
+  },[])
 
   useEffect(() => {
-    if (user === undefined) {
-      navigate("/login");
-    }
-  }, [user]);
+
+        if(setRepartition && setRepartition.length > 0) {
+
+          const devicesCount = repartition.map((data) => data.deviceCount)
+          const siteName = repartition.map((data) => data.siteName)
+          const newOption = {
+            chart: {
+              type: 'bar',
+            },
+            series: [
+              {
+                name: 'Nombre de PTI',
+                data: devicesCount,
+              },
+            ],
+            xaxis: {
+              categories: siteName,
+            },
+            title: {
+              text: 'Répartition des PTI par site',
+              align: 'left',
+            },
+          };
+
+          setOptions(newOption)
+        }
+  },[repartition])
+
 
 
   return (
-    <div className="dashboard">
-      <div className="left">
-        <h1>Enregistrez un PTI</h1>
-        <form className="dashboard-form" onSubmit={onFinish} ref={formRef}>
-          <input
-            required={true}
-            type="tel"
-            className="line"
-            name="line"
-            placeholder="+330178675463"
-            onChange={onInputChange}
-          />
-          <input
-            required={true}
-            type="text"
-            className="brand"
-            name="brand"
-            placeholder="brand"
-            onChange={onInputChange}
-          />
-          <input
-            required={true}
-            type="date"
-            className="date"
-            name="date"
-            onChange={onInputChange}
-          />
-          <select className="site" name="site_id" onChange={onSelectChange}>
-            <option value="">Choississez</option>
-            {siteList.length > 0 && siteList.map(({ _id, site_name }) => (
-              <option key={_id} value={_id}>
-                {site_name}
-              </option>
-            ))}
-          </select>
+    <div>
+      <Title level={2}>Dashboard</Title>
 
-          <select className="state" name="state" onChange={onSelectChange}>
-            <option value="">Choisissez</option>
-            <option value="tbe">Très bon état</option>
-            <option value="be">Bon état</option>
-            <option value="edg">Endommagé</option>
-          </select>
-          <button type="submit" className="login-btn">
-            Enregistrer
-          </button>
-        </form>
-      </div>
-      <div className="right">
-        <h1>Liste des PTI</h1>
-        <table className="table-style">
-          <thead>
-          <tr>
-            <th>Line</th>
-            <th>Brand</th>
-            <th>Date</th>
-            <th>Site</th>
-            <th>State</th>
-            <th>Action</th>
-          </tr>
-          </thead>
-          <tbody>
-          {devices && devices.map(({ _id , line, brand, date,site_id , state }) => (
-            <tr key={_id}>
-              <td>{line}</td>
-              <td>{brand}</td>
-              <td>{formatDate(date)}</td>
-              <td>{site_id.site_name}</td>
-              <td>{state}</td>
-              <td className="actions">
-                <button onClick={(e) => deleteDevice(_id)} className="delete">{<DeleteFilled/>}</button>
-              </td>
-            </tr>
-          ))}
-          </tbody>
-        </table>
-      </div>
+      <Row gutter={24}>
+        <Col span={8}>
+          <Card>
+            <Statistic value={stats.user} title="Nombre d'agent" />
+          </Card>
+        </Col>
+
+        <Col span={8}>
+          <Card>
+            <Statistic value={stats.sites} title="Nombre de site" />
+          </Card>
+        </Col>
+
+        <Col span={8}>
+          <Card>
+            <Statistic value={stats.devices} title="Nombre de Pti" />
+          </Card>
+        </Col>
+      </Row>
+      <Row  style={{marginTop : "2rem"}}>
+        <Col span={32} style={{width : "100%"}}>
+          <Card>
+            { options && options.series && options.series.length > 0 && (
+              <ReactApexChart
+              options={options}
+              series={options.series}
+              type='bar'
+              height={400}
+              width={"100%"}
+            />)
+            }
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 };

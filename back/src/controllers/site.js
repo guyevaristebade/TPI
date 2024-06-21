@@ -1,5 +1,5 @@
 import {deviceModel, siteModel} from "../models/index.js";
-import { sanitizeFilter } from 'mongoose'
+import mongoose,{ sanitizeFilter } from 'mongoose'
 
 export const createSite = async (siteData) => {
   try {
@@ -68,21 +68,33 @@ export const getSites = async () => {
 
 export const updateSite = async (siteId, siteData) => {
   try {
+    // Vérification de l'ID
+    if (!siteId || !mongoose.Types.ObjectId.isValid(siteId)) {
+      return { status: 400, error: 'Invalid or missing site ID' };
+    }
+
+    // Vérification du corps de la requête
+    if (!siteData || typeof siteData !== 'object') {
+      return { status: 400, error: 'Invalid or missing request body' };
+    }
 
     const updatedSite = await siteModel.findByIdAndUpdate(
       siteId,
-      { site_name : siteData.site_name, address : siteData.address},
+      {
+        site_name: siteData.site_name,
+        address: siteData.address
+      },
       { new: true }
     );
 
     if (!updatedSite) {
-      return { status : 404, message : 'Site not found' };
+      return { status: 404, error: 'Site not found' };
     }
 
-    return { status : 200, message : 'Site updated' };
+    return { status: 200, data: updatedSite };
 
   } catch (error) {
-    return { status : 500 , message : `Internal server Error. Veuillez contacter l'administrateur du site ` };
+    return { status: 500, error: 'Internal server error => ' + error.message };
   }
 };
 

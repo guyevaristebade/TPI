@@ -39,4 +39,10 @@ siteRouter.delete("/:siteId", async (req, res) => {
   }
 })
 
-siteRouter.put("/:siteId", updateSite)
+siteRouter.put("/:siteId", async (req, res) => {
+  const { siteId }  = req.params;
+  const siteData = req.body
+  const response = await updateSite(siteId,siteData)
+
+  res.status(response.status).send(response.data || response.error)
+})
