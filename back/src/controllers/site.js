@@ -1,5 +1,6 @@
 import {deviceModel, siteModel} from "../models/index.js";
 import mongoose,{ sanitizeFilter } from 'mongoose'
+import {getChangedFields} from "../helpers/helpers.js";
 
 export const createSite = async (siteData) => {
   try {
@@ -80,10 +81,7 @@ export const updateSite = async (siteId, siteData) => {
 
     const updatedSite = await siteModel.findByIdAndUpdate(
       siteId,
-      {
-        site_name: siteData.site_name,
-        address: siteData.address
-      },
+      getChangedFields(siteData),
       { new: true }
     );
 

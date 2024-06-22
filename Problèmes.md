@@ -111,3 +111,5 @@ Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the cli
   code: 'ERR_HTTP_HEADERS_SENT'
 
 ```
+
+lorsqu'on soumet un champs de modification vide il se soumet

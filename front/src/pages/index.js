@@ -8,3 +8,5 @@ export * from './device-list'
 export * from './site-list';
 export * from './add-agent'
 export * from './agent-list'
+export * from './edit-device'
+export * from './edit-site'

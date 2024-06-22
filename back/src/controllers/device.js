@@ -1,6 +1,7 @@
 import { deviceModel } from "../models/index.js";
 import mongoose, { sanitizeFilter }  from "mongoose";
 import { lineRegex } from "../helpers/index.js";
+import {getChangedFields} from "../helpers/helpers.js";
 
 
 export const createDevice = async (deviceData) => {
@@ -82,6 +83,14 @@ export const updateDevice = async (deviceId, deviceData) => {
 
   try {
 
+    const deviceDataValues = Object.values(deviceData);
+    if(deviceDataValues.length === 0) {
+      response.status = 400
+      response.error = "Veuillez remplir au moins 1 champs"
+      return response
+    }
+    console.log(deviceDataValues)
+
     if (!deviceId || !mongoose.Types.ObjectId.isValid(deviceId)) {
       response.error = "Invalid or missing device ID";
       response.status = 400;
@@ -98,7 +107,7 @@ export const updateDevice = async (deviceId, deviceData) => {
 
     const updatedDevice = await deviceModel.findByIdAndUpdate(
       deviceId,
-      deviceData,
+      getChangedFields(deviceData),
       { new: true }
     );
 

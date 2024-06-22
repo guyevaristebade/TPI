@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Popconfirm, message, Empty, Flex } from 'antd';
+import { Table, Button, Popconfirm, message, Empty } from 'antd';
 import { getSites, deleteSite } from '../api';
-import { DeleteFilled, PlusOutlined } from '@ant-design/icons';
+import { DeleteFilled, EditFilled, PlusOutlined } from '@ant-design/icons';
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks";
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { generatePDF } from "../helpers";
 
 export const SiteList = () => {
   const [siteList, setSiteList] = useState([]);
@@ -18,14 +17,19 @@ export const SiteList = () => {
     key: 'action',
     align: "center",
     render: (text, record) => (
-      <Popconfirm
-        title="Are you sure to delete this site?"
-        onConfirm={() => onDelete(record._id)}
-        okText="Yes"
-        cancelText="No"
-      >
-        <Button type="primary" danger icon={<DeleteFilled />} />
-      </Popconfirm>
+      <div style={{ display: 'flex', gap: '20px' }}>
+        <Popconfirm
+          title="Are you sure to delete this site?"
+          onConfirm={() => onDelete(record._id)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button type="primary" danger icon={<DeleteFilled />} />
+        </Popconfirm>
+        <Link to={`/edit-site/${record._id}`}>
+          <Button type="primary" icon={<EditFilled />} />
+        </Link>
+      </div>
     ),
   };
 
@@ -38,7 +42,7 @@ export const SiteList = () => {
       const response = await getSites();
       setSiteList(response.sites);
     } catch (error) {
-      message.error(error.message);
+      message.error("Failed to fetch sites");
     }
   };
 
@@ -46,7 +50,7 @@ export const SiteList = () => {
     try {
       await deleteSite(id);
       message.success("Site deleted successfully");
-      fetchSites(); // Refresh the site list
+      fetchSites();
     } catch (error) {
       message.error("Failed to delete site");
     }
@@ -68,15 +72,19 @@ export const SiteList = () => {
     actionOrNot,
   ];
 
-  const downloadPDF = () => {
-    const doc = new jsPDF();
-    doc.text("Liste des Sites", 14, 10);
-    doc.autoTable({
-      head: [['Nom du site', 'Adresse']],
-      body: siteList.map(site => [site.site_name, site.address]),
-      margin: { top: 20 },
+  const handleDownloadPDF = () => {
+    const pdfData = siteList.map(site => [
+      site.site_name,
+      site.address
+    ]);
+
+    generatePDF({
+      title: "Liste des Sites",
+      headers: ['Nom du site', 'Adresse'],
+      data: pdfData,
+      footerText: user.name || "Utilisateur inconnu", // Assurez-vous d'avoir une valeur par défaut
+      fileName: 'liste_des_sites.pdf'
     });
-    doc.save('liste_des_sites.pdf');
   };
 
   return (
@@ -84,12 +92,12 @@ export const SiteList = () => {
       <h1>Liste des Sites</h1>
       {
         siteList.length === 0 ? (
-          <Flex justify="center" align="center" vertical gap="5rem">
+          <div style={{ textAlign: 'center', padding: '5rem' }}>
             <Empty description="La liste des sites est vide" />
             <Button icon={<PlusOutlined />} type="primary">
               <Link to="/ajout-site">Ajoutez un site</Link>
             </Button>
-          </Flex>
+          </div>
         ) : (
           <div>
             <Table
@@ -98,11 +106,15 @@ export const SiteList = () => {
               rowKey="_id"
               loading={loading}
             />
-            <Button size="large" onClick={downloadPDF} type="primary" style={{ marginBottom: '1rem' }}>
+            <Button
+              size="large"
+              onClick={handleDownloadPDF}
+              type="primary"
+              style={{ marginBottom: '1rem' }}
+            >
               Télécharger en PDF
             </Button>
           </div>
-
         )
       }
     </div>

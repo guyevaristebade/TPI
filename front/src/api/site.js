@@ -40,3 +40,14 @@ export const getAddress = async (complement, code) =>{
     return e.message;
   }
 }
+
+
+export const updateSite = async (id, siteData) =>{
+  try {
+    const response = await instance.post(`/site/${id}`,siteData);
+    return response.data;
+  }catch (error){
+    console.error(error);
+    return error.response.data;
+  }
+}

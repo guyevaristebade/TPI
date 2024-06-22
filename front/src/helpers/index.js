@@ -1,3 +1,3 @@
 export * from './instance'
-export * from './functions'
+export * from './helpers'
 export * from './menu-item'

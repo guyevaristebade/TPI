@@ -11,51 +11,41 @@ import { Link } from 'react-router-dom';
 
 export const menuItems = [
   {
-    key: '1',
+    key: '/',
     icon: <AppstoreOutlined />,
     label: <Link to='/'>DashBoard</Link>,
   },
   {
-    key: '2',
+    key: 'site',
     icon: <BankOutlined />,
     label: "Site",
     children: [
       {
-        key: '2-1',
+        key: 'add-site',
         icon: <PlusOutlined />,
-        label: <Link to='/ajout-site'>Ajouter un site</Link>,
+        label: <Link to='/add-site'>Ajouter un site</Link>,
       },
       {
-        key: '2-2',
+        key: 'site-list',
         icon: <UnorderedListOutlined />,
-        label: <Link to='/liste-site'>Liste des sites</Link>,
-      },
-      {
-        key: '2-3',
-        icon: <EditOutlined />,
-        label: <Link to='/edit-site'>Modifier</Link>,
+        label: <Link to='/site-list'>Liste des sites</Link>,
       }
     ]
   },
   {
-    key: '3',
+    key: 'pti',
     icon: <MobileOutlined />,
     label: "PTI",
     children: [
       {
-        key: '3-1',
+        key: 'add-pti',
         icon: <PlusOutlined />,
-        label: <Link to='/ajout-pti'>Ajouter des pti</Link>,
+        label: <Link to='/add-pti'>Ajouter des pti</Link>,
       },
       {
-        key: '3-2',
+        key: 'pti-list',
         icon: <UnorderedListOutlined />,
-        label: <Link to='/liste-pti'>Liste des pti</Link>,
-      },
-      {
-        key: '3-3',
-        icon: <EditOutlined />,
-        label: <Link to='/edit-pti'>Modifier un PTI</Link>,
+        label: <Link to='/pti-list'>Liste des pti</Link>,
       }
     ]
   },
@@ -65,14 +55,14 @@ export const menuItems = [
     label: "Utilisateur",
     children: [
       {
-        key: '4-1',
+        key: 'add-agent',
         icon: <UserAddOutlined />,
-        label: <Link to='/ajout-agent'>Créer des utilisateurs</Link>
+        label: <Link to='/add-agent'>Créer des utilisateurs</Link>
       },
       {
-        key: '4-2',
+        key: 'agent-list',
         icon: <UnorderedListOutlined />,
-        label: <Link to='/liste-agent'>Liste des utilisateurs</Link>
+        label: <Link to='/agent-list'>Liste des utilisateurs</Link>
       }
     ]
   }
