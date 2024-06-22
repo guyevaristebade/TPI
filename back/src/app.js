@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './helpers/index.js';
 import { siteRouter, userRouter, deviceRouter, statisticsRouter } from './routes/index.js';
@@ -14,26 +15,19 @@ await connectDB();
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(helmet());
 
 // Fetch allowed origins from environment variables
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
 
 // Configure CORS
 const corsOptions = {
-    origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  credentials: true,
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+    credentials: true,
 };
+
 
 app.use(cors(corsOptions));
 
