@@ -45,7 +45,8 @@ userRouter.post('/login', async (req, res) => {
             maxAge: 31 * 24 * 3600 * 1000,
             httpOnly: useSecureAuth,
             secure: useSecureAuth,
-            domain : process.env.COOKIE_DOMAIN
+            domain : process.env.COOKIE_DOMAIN,
+            sameSite: "None"
         });
 
         response.data = { user: tokenContent, token : token };
@@ -77,7 +78,8 @@ userRouter.get('/is-logged-in', authenticated, async (req, res) => {
             maxAge: 31 * 24 * 3600 * 1000,
             httpOnly: useSecureAuth,
             secure: useSecureAuth,
-            domain : process.env.COOKIE_DOMAIN
+            domain : process.env.COOKIE_DOMAIN,
+            sameSite: "None"
         });
     }
 
