@@ -98,13 +98,14 @@ export const isLoggedIn = (req, res, next) => {
     let response = {
         status: 200
     };
+    const useSecureAuth = process.env.NODE_ENV !== 'development';
 
     if (req.cookies['token-auth']) {
         res.cookie('token-auth', req.cookies['token-auth'], {
             maxAge: 31 * 24 * 3600 * 1000,
-            httpOnly: true,
-            sameSite : "None",
-            secure: process.env.NODE_ENV !== 'development'
+            httpOnly: useSecureAuth,
+            secure: useSecureAuth,
+            domain : process.env.COOKIE_DOMAIN
         });
     }
 

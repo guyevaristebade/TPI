@@ -44,7 +44,8 @@ userRouter.post('/login', async (req, res) => {
         res.cookie('token-auth', token, {
             maxAge: 31 * 24 * 3600 * 1000,
             httpOnly: useSecureAuth,
-            secure: useSecureAuth
+            secure: useSecureAuth,
+            domain : process.env.COOKIE_DOMAIN
         });
 
         response.data = { user: tokenContent, token : token };
@@ -55,7 +56,7 @@ userRouter.post('/login', async (req, res) => {
     return res.status(response.status).send(response.data || response.error);
 });
 
-userRouter.get('/users', async (req, res) => {
+userRouter.get('/users', authenticated,async (req, res) => {
     const result = await getAllAgents();
     if (result.status !== 200) {
         return res.status(result.status).json({ message: result.message });
@@ -76,6 +77,7 @@ userRouter.get('/is-logged-in', authenticated, async (req, res) => {
             maxAge: 31 * 24 * 3600 * 1000,
             httpOnly: useSecureAuth,
             secure: useSecureAuth,
+            domain : process.env.COOKIE_DOMAIN
         });
     }
 
