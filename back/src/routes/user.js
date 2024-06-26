@@ -41,6 +41,8 @@ userRouter.post('/login', async (req, res) => {
 
         const token = jwt.sign(tokenContent, process.env.SECRET_KEY || '');
 
+        console.log(useSecureAuth)
+
         res.cookie('token-auth', token, {
             maxAge: 31 * 24 * 3600 * 1000,
             httpOnly: true,
@@ -72,7 +74,7 @@ userRouter.get('/is-logged-in', authenticated, async (req, res) => {
 
     const useSecureAuth = process.env.NODE_ENV !== 'development';
 
-
+    console.log(useSecureAuth)
     if (req.cookies['token-auth']) {
         res.cookie('token-auth', req.cookies['token-auth'], {
             maxAge: 31 * 24 * 3600 * 1000,
@@ -82,6 +84,7 @@ userRouter.get('/is-logged-in', authenticated, async (req, res) => {
             sameSite: useSecureAuth ? "None" : "Lax"
         });
     }
+
 
     response.data = { user: req.user, token : req.cookies['token-auth'] };
 
