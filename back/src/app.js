@@ -30,13 +30,13 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.options("*",(req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', allowedOrigins);
+app.options('*', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://ataliansecurityfront.vercel.app');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', "GET, POST, PUT, DELETE, OPTIONS");
-    res.setHeader('Access-Control-Allow-Headers', 'Origins, X-Requested-With, Content-Type, Accept, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     res.sendStatus(200);
-})
+});
 
 // Routes
 app.use('/api/site', siteRouter);
