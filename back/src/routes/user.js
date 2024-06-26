@@ -43,10 +43,10 @@ userRouter.post('/login', async (req, res) => {
 
         res.cookie('token-auth', token, {
             maxAge: 31 * 24 * 3600 * 1000,
-            httpOnly: useSecureAuth,
+            httpOnly: true,
             secure: useSecureAuth,
-            domain : process.env.COOKIE_DOMAIN,
-            sameSite: "None"
+            domain :useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
+            sameSite: useSecureAuth ? "None" : "Lax"
         });
 
         response.data = { user: tokenContent, token : token };
@@ -76,10 +76,10 @@ userRouter.get('/is-logged-in', authenticated, async (req, res) => {
     if (req.cookies['token-auth']) {
         res.cookie('token-auth', req.cookies['token-auth'], {
             maxAge: 31 * 24 * 3600 * 1000,
-            httpOnly: useSecureAuth,
+            httpOnly: true,
             secure: useSecureAuth,
-            domain : process.env.COOKIE_DOMAIN,
-            sameSite: "None"
+            domain :useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
+            sameSite: useSecureAuth ? "None" : "Lax"
         });
     }
 
