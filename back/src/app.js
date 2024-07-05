@@ -1,25 +1,21 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './helpers/index.js';
-import { siteRouter, userRouter, deviceRouter, statisticsRouter } from './routes/index.js';
-
+import { siteRouter, userRouter, deviceRouter, statisticsRouter } from './routes/index.js'
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
+const useSecureAuth = process.env.NODE_ENV !== 'development';
 
 await connectDB();
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(helmet());
 
-// Fetch allowed origins from environment variables
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
-
+const allowedOrigins =  useSecureAuth ?  process.env.ALLOWED_ORIGINS?.split(',') || [] : process.env.LOCAL_ALLOWED_ORIGINS?.split(',') || []
 // Configure CORS
 const corsOptions = {
     origin: allowedOrigins,
@@ -30,8 +26,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.options('*', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', 'https://ataliansecurityfront.vercel.app');
+    app.options('*', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', 'localhost');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');

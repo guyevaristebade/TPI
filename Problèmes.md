@@ -113,3 +113,10 @@ Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the cli
 ```
 
 lorsqu'on soumet un champs de modification vide il se soumet
+
+
+
+### Problème 
+
+J'ai un problème avec les cooikes lorsque je met le site en production 
+

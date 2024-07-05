@@ -41,14 +41,13 @@ userRouter.post('/login', async (req, res) => {
 
         const token = jwt.sign(tokenContent, process.env.SECRET_KEY || '');
 
-        console.log(useSecureAuth)
 
         res.cookie('token-auth', token, {
             maxAge: 31 * 24 * 3600 * 1000,
-            httpOnly: useSecureAuth,
+            httpOnly: true,
             secure: useSecureAuth,
             domain :useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
-            sameSite: useSecureAuth ? "None" : "Lax"
+            sameSite: "Lax"
         });
 
         response.data = { user: tokenContent, token : token };
@@ -74,14 +73,14 @@ userRouter.get('/is-logged-in', authenticated, async (req, res) => {
 
     const useSecureAuth = process.env.NODE_ENV !== 'development';
 
-    console.log(useSecureAuth)
+
     if (req.cookies['token-auth']) {
         res.cookie('token-auth', req.cookies['token-auth'], {
             maxAge: 31 * 24 * 3600 * 1000,
-            httpOnly: useSecureAuth,
+            httpOnly: true,
             secure: useSecureAuth,
             domain :useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
-            sameSite: useSecureAuth ? "None" : "Lax"
+            sameSite: "Lax"
         });
     }
 
