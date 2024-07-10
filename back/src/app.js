@@ -18,7 +18,7 @@ app.use(express.json());
 const allowedOrigins =  useSecureAuth ?  process.env.ALLOWED_ORIGINS?.split(',') || [] : process.env.LOCAL_ALLOWED_ORIGINS?.split(',') || []
 // Configure CORS
 const corsOptions = {
-    origin: allowedOrigins,
+    origin: "*",
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
     credentials: true
@@ -27,7 +27,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
     app.options('*', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', 'localhost');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');

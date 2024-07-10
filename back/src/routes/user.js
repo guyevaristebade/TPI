@@ -46,7 +46,7 @@ userRouter.post('/login', async (req, res) => {
             maxAge: 31 * 24 * 3600 * 1000,
             httpOnly: true,
             secure: useSecureAuth,
-            domain :useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
+            domain : useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
             sameSite: "Lax"
         });
 
