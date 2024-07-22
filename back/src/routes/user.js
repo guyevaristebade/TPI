@@ -18,21 +18,21 @@ userRouter.post('/login', async (req, res) => {
     let response = {
         status: 200
     };
-
+    const { name , password } = req.body;
     const useSecureAuth = process.env.NODE_ENV !== 'development';
 
-    if (!req.body.name || !req.body.password) {
+    if (!name || !password) {
         return res.status(400).send('Username and password are required');
     }
 
     try {
-        const user = await User.findOne({ name: req.body.name }).exec();
+        const user = await User.findOne({ name: name }).exec();
 
         if (!user) {
             return res.status(401).send('Username or password incorrect');
         }
 
-        const validPass = await bcrypt.compare(req.body.password, user.password);
+        const validPass = await bcrypt.compare(password, user.password);
         if (!validPass) {
             return res.status(401).send('Username or password incorrect');
         }
@@ -44,7 +44,7 @@ userRouter.post('/login', async (req, res) => {
 
         res.cookie('token-auth', token, {
             maxAge: 31 * 24 * 3600 * 1000,
-            httpOnly: true,
+            httpOnly: useSecureAuth,
             secure: useSecureAuth,
             domain : useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
             sameSite: "Lax"
