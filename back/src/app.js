@@ -10,6 +10,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
+
 const useSecureAuth = process.env.NODE_ENV !== 'development';
 
 await connectDB();
