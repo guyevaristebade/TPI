@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 import { connectDB } from './helpers/index.js';
 import { siteRouter, userRouter, deviceRouter, statisticsRouter } from './routes/index.js'
 
@@ -14,7 +15,8 @@ const useSecureAuth = process.env.NODE_ENV !== 'development';
 await connectDB();
 
 app.use(cookieParser());
-app.use(express.json());
+//app.use(express.json());
+app.use(bodyParser.json())
 
 const allowedOrigins =  useSecureAuth ?  process.env.ALLOWED_ORIGINS?.split(',') || [] : process.env.LOCAL_ALLOWED_ORIGINS?.split(',') || []
 // Configure CORS
