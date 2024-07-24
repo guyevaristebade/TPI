@@ -15,9 +15,6 @@ const useSecureAuth = process.env.NODE_ENV !== 'development';
 
 await connectDB();
 
-app.use(cookieParser());
-//app.use(express.json());
-app.use(bodyParser.json())
 
 const allowedOrigins =  useSecureAuth ?  process.env.ALLOWED_ORIGINS?.split(',') || [] : process.env.LOCAL_ALLOWED_ORIGINS?.split(',') || []
 // Configure CORS
@@ -29,6 +26,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
+app.use(bodyParser.json())
 
 // Routes
 app.use('/api/site', siteRouter);

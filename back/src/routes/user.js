@@ -42,7 +42,7 @@ userRouter.post('/login', async (req, res) => {
         const token = jwt.sign(tokenContent, process.env.SECRET_KEY || '');
 
 
-        res.cookie('token-auth', token, {
+        res.cookie('token', token, {
             maxAge: 31 * 24 * 3600 * 1000,
             httpOnly: true,
             secure: useSecureAuth,
@@ -50,7 +50,7 @@ userRouter.post('/login', async (req, res) => {
             sameSite: "Lax"
         });
 
-        response.data = { user: tokenContent, token : token };
+        response.data = { user: tokenContent, token };
     } catch (error) {
         return res.status(500).send('Internal server error ' + error.message);
     }
@@ -72,26 +72,28 @@ userRouter.get('/is-logged-in', authenticated, async (req, res) => {
     };
 
     const useSecureAuth = process.env.NODE_ENV !== 'development';
+    const token = req.cookies['token'];
 
-
-    if (req.cookies['token-auth']) {
-        res.cookie('token-auth', req.cookies['token-auth'], {
+    if (token) {
+        /*res.cookie('token-auth', req.cookies['token-auth'], {
             maxAge: 31 * 24 * 3600 * 1000,
             httpOnly: true,
             secure: useSecureAuth,
             domain :useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
             sameSite: "Lax"
-        });
+        });*/
+
+        response.data = { user: req.user, token };
+
     }
 
-
-    response.data = { user: req.user, token : req.cookies['token-auth'] };
+    //response.data = { user: req.user, token : req.cookies['token-auth'] };
 
     res.status(response.status).send(response.data || response.error);
 });
 
 userRouter.delete('/logout', authenticated, (req, res) => {
-    res.cookie('token-auth', '', {
+    res.cookie('token', '', {
         maxAge: -100
     });
 

@@ -35,7 +35,7 @@ export const AuthenticationProvider = ({ children }) => {
       .catch(() => {
         setUser(undefined);
       })
-  },[]);
+  },[user]);
 
   return (
     <AuthenticationContext.Provider value={{ user, login, logout }}>
