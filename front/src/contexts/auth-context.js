@@ -29,13 +29,13 @@ export const AuthenticationProvider = ({ children }) => {
   useEffect(() => {
     isLoggedIn()
       .then((data) => {
-        if (user === "Unauthorized") throw new Error("Unauthorized");
+        if (user === "Unauthorized") setUser(undefined);
         setUser(data.user);
       })
       .catch(() => {
         setUser(undefined);
       })
-  },[user]);
+  },[]);
 
   return (
     <AuthenticationContext.Provider value={{ user, login, logout }}>
