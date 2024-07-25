@@ -47,7 +47,7 @@ userRouter.post('/login', async (req, res) => {
             httpOnly: true,
             secure: useSecureAuth,
             domain : useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
-            sameSite: "Lax"
+            sameSite: "None"
         });
 
         response.data = { user: tokenContent, token };
