@@ -93,12 +93,19 @@ userRouter.get('/is-logged-in', authenticated, async (req, res) => {
 });
 
 userRouter.delete('/logout', authenticated, (req, res) => {
-    res.cookie('token', '', {
-        maxAge: -100
+
+    const useSecureAuth = process.env.NODE_ENV !== 'development';
+
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: useSecureAuth,
+        domain: useSecureAuth ? process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
+        sameSite: 'None'
     });
 
-    res.status(200).send('Disconnected');
+    res.status(200).send({ message: 'Disconnected' });
 });
+
 
 userRouter.delete('/:_id', async (req, res) => {
     const { _id } = req.params;
