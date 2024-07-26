@@ -15,9 +15,6 @@ userRouter.post('/register', async (req, res) => {
 });
 
 userRouter.post('/login', async (req, res) => {
-    let response = {
-        status: 200
-    };
 
     const useSecureAuth = process.env.NODE_ENV !== 'development';
 
@@ -71,23 +68,11 @@ userRouter.get('/is-logged-in', authenticated, async (req, res) => {
         status: 200,
     };
 
-    const useSecureAuth = process.env.NODE_ENV !== 'development';
     const token = req.cookies['token'];
 
     if (token) {
-        /*res.cookie('token-auth', req.cookies['token-auth'], {
-            maxAge: 31 * 24 * 3600 * 1000,
-            httpOnly: true,
-            secure: useSecureAuth,
-            domain :useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
-            sameSite: "Lax"
-        });*/
-
         response.data = { user: req.user, token };
-
     }
-
-    //response.data = { user: req.user, token : req.cookies['token-auth'] };
 
     res.status(response.status).send(response.data || response.error);
 });
