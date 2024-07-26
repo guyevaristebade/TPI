@@ -11,7 +11,7 @@ userRouter.post('/register', async (req, res) => {
     const userData = req.body;
     const response = await register(userData);
 
-    res.status(response.status).send(response);
+    res.status(response.status).send(response.data || response.error);
 });
 
 userRouter.post('/login', async (req, res) => {
