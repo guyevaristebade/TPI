@@ -1,41 +1,39 @@
 import express from 'express';
-import {createDevice, deleteDevice, getDevices, updateDevice} from "../controllers/index.js";
+import { createDevice, deleteDeviceById, getAllDevice, getDeviceById, updateDeviceById } from "../controllers/index.js";
 
 export const deviceRouter = express.Router();
 
+// POST REQUEST
 deviceRouter.post('/', async (req, res) => {
   const deviceData = req.body;
   const result = await createDevice(deviceData)
 
-  res.status(result.status).send(result)
+  res.status(result.status).send(result.data || result.error)
 });
 
-deviceRouter.delete('/:deviceId',async (req, res) => {
-  const { deviceId } = req.params
-  const result = await deleteDevice(deviceId)
-
-  if (result.status !== 200) {
-    return res.status(result.status).json({ message: result.message });
-  }
-
-  res.status(result.status).json({ message: result.message})
+//DELETE REQUEST
+deviceRouter.delete('/:id',async (req, res) => {
+  const { id } = req.params
+  const result = await deleteDeviceById(id)
+  res.status(result.status).send(result.data || result.error)
 });
 
-deviceRouter.put('/:deviceId',async (req, res) => {
-  const { deviceId } = req.params;
+// PUT REQUEST
+deviceRouter.put('/:id',async (req, res) => {
+  const { id } = req.params;
   const deviceData = req.body;
-
-  const result = await updateDevice(deviceId, deviceData);
-
-  res.status(result.status).send(result || result)
+  const result = await updateDeviceById(id, deviceData);
+  res.status(result.status).send(result.data || result.error)
 });
 
+//GET REQUEST
 deviceRouter.get('/', async (req, res) => {
-  const result = await getDevices();
+  const result = await getAllDevice();
+  res.status(result.status).send(result.data || result.error)
+});
 
-  if (result.status !== 200) {
-    return res.status(result.status).json({ message: result.message})
-  }else{
-    res.status(result.status).json({ device : result.data })
-  }
+deviceRouter.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  const result = await getDeviceById(id);
+  res.status(result.status).send(result.data || result.error)
 });

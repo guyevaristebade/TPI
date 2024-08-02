@@ -1,5 +1,5 @@
 import { deviceModel } from "../models/index.js";
-import mongoose, { sanitizeFilter }  from "mongoose";
+import mongoose, {isValidObjectId, sanitizeFilter} from "mongoose";
 import { lineRegex } from "../helpers/index.js";
 import {getChangedFields} from "../helpers/helpers.js";
 
@@ -9,14 +9,13 @@ export const createDevice = async (deviceData) => {
     status : 200
   }
 
-  try {
-
     if (!lineRegex.test(deviceData.line)) {
       response.status = 400;
       response.error = "Invalid phone number format for line"
       return response;
     }
-
+    
+  try {
     const existingDevice = await deviceModel.findOne(sanitizeFilter({ line: deviceData.line })).exec();
 
     if (existingDevice) {
@@ -25,20 +24,14 @@ export const createDevice = async (deviceData) => {
       return response;
     }
 
-    const device = new deviceModel({
-      line: deviceData.line,
-      brand: deviceData.brand,
-      date: deviceData.date,
-      site_id: deviceData.site_id,
-      state: deviceData.state
-    });
+    const device = new deviceModel(deviceData);
 
     await device.save();
 
-    response.data = "Device created successfully";
+    response.data = device;
   } catch (error) {
     response.status = 500;
-    response.error = "Internal Server error "
+    response.error = "Internal Server error " + error.message
   }
 
   return response;
@@ -46,68 +39,76 @@ export const createDevice = async (deviceData) => {
 
 
 
-export const deleteDevice = async (deviceId) => {
+export const deleteDeviceById = async (id) => {
+  let response = {
+    status : 200
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    response.error = "Invalid or missing device ID";
+    response.status = 400;
+    return response;
+  }
+  
   try {
-    const deletedDevice = await deviceModel.findByIdAndDelete(sanitizeFilter(deviceId));
+    const deletedDevice = await deviceModel.findByIdAndDelete(sanitizeFilter(id));
 
     if (!deletedDevice) {
-      return { status : 404, message : "Device not found"};
+      response.status = 404
+      response.error = 'Device not found'
+      return response
     }
 
-    return { status : 200, message : "Device deleted successfully" };
-
+    response.data = { message : " device deleted successfully" }
   } catch (error) {
-    return { status : 500, message : "Internal Server Error "};
+    response.status = 500;
+    response.error = "Internal Server error " + error.message
   }
+
+  return response;
 };
 
-export const getDevices = async () => {
+export const getAllDevice = async () => {
+  let response = {
+    status : 200
+  }
+  
   try{
     const device = await deviceModel.find().populate("site_id");
 
     if(!device){
-      return { status : 404, message : "Device not found "};
+      response.status = 404
+      response.error = "Device not found"
+      return response
     }
-
-    return { status : 200, data : device };
-  }catch (e) {
-    return { status : 500, message : "Internal Server Error "};
+    
+    response.data = device;
+    return response 
+    
+  } catch (error) {
+    response.status = 500;
+    response.error = "Internal Server error " + error.message
   }
+
+  return response;
 }
 
 
-export const updateDevice = async (deviceId, deviceData) => {
+export const updateDeviceById = async (id, deviceData) => {
   let response = {
     status: 200
   };
 
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    response.error = "Invalid or missing device ID";
+    response.status = 400;
+    return response;
+  }
+
   try {
-
-    const deviceDataValues = Object.values(deviceData);
-    if(deviceDataValues.length === 0) {
-      response.status = 400
-      response.error = "Veuillez remplir au moins 1 champs"
-      return response
-    }
-    console.log(deviceDataValues)
-
-    if (!deviceId || !mongoose.Types.ObjectId.isValid(deviceId)) {
-      response.error = "Invalid or missing device ID";
-      response.status = 400;
-      return response;
-    }
-
-
-    if (!deviceData || typeof deviceData !== 'object') {
-      response.error = "Invalid or missing request body";
-      response.status = 400;
-      return response;
-    }
-
-
     const updatedDevice = await deviceModel.findByIdAndUpdate(
-      deviceId,
-      getChangedFields(deviceData),
+      id,
+      deviceData,
       { new: true }
     );
 
@@ -126,3 +127,33 @@ export const updateDevice = async (deviceId, deviceData) => {
 
   return response;
 };
+
+
+export const getDeviceById = async (id) => {
+  let response = { 
+    status : 200
+  }
+  
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    response.error = "Invalid or missing device ID";
+    response.status = 400;
+    return response;
+  }
+  
+  try {
+    const device = await deviceModel.findById(id).populate("site_id");
+
+    if(!device){
+      response.error = "device does not exist";
+      response.status = 404;
+      return response;
+    }
+
+    response.data = device
+  }catch (error) {
+    response.error = "Internal server error => " + error.message;
+    response.status = 500;
+  }
+
+  return response
+}

@@ -1,24 +1,32 @@
 import {deviceModel, siteModel} from "../models/index.js";
 import mongoose,{ sanitizeFilter } from 'mongoose'
-import {getChangedFields} from "../helpers/helpers.js";
 
 export const createSite = async (siteData) => {
+    let response = {
+      status : 200
+    }
+
   try {
     let site = await siteModel.findOne(sanitizeFilter({ site_name: siteData.site_name}));
 
     if (site){
-      return { status : 400, message :"The site already exists" }
+      response.error = "The site already exists";
+      response.status = 400;
+      return response;
     }
 
-    site = new siteModel({ site_name : siteData.site_name , address : siteData.address });
+    const saveSite = new siteModel(siteData);
 
-    await site.save();
+    await saveSite.save();
 
-    return { status : 201, message : "Site created successfully" }
+    response.data = saveSite;
 
   } catch (error) {
-    return { status : 500 , message : `Internal server Error. Veuillez contacter l'administrateur du site ` };
+    response.error = `Internal server Error : ${error.message}`;
+    response.status = 500
   }
+
+  return response;
 };
 
 
@@ -26,73 +34,95 @@ export const createSite = async (siteData) => {
  * Cette fonction permet de supprimer un site
  * Elle supprime aussi le ou les PTI associé au site
  * */
-export const deleteSite = async (_id) => {
+export const deleteSite = async (id) => {
+
+  let response = {
+    status : 200
+  }
   try {
-    const siteToDelete = await siteModel.findById(_id);
+    const siteToDelete = await siteModel.findById(id);
 
     if (!siteToDelete) {
-      return { status : 404, message : "Site not found" }
+      response.status = 404
+      response.error = 'Site not found'
+      return response
     }
 
-    const deviceToDelete = await deviceModel.findOne({ site_id: _id });
+    const deviceToDelete = await deviceModel.findOne({ site_id: id });
 
     if (!deviceToDelete) {
-      await siteModel.findByIdAndDelete(_id);
+      await siteModel.findByIdAndDelete(id);
     }else{
-      await deviceModel.findByIdAndDelete(deviceToDelete._id);
-      await siteModel.findByIdAndDelete(_id);
+      await deviceModel.findByIdAndDelete(deviceToDelete.id);
+      await siteModel.findByIdAndDelete(id);
     }
 
-    return { status : 200 , message : "Site deleted successfully" };
+    response.data = { message : "Site deleted successfully" }
 
   } catch (error) {
-    console.error(error.message);
-    return { status : 500 , message : `Internal server Error. Veuillez contacter l'administrateur du site  ` };
+    response.error = `Internal server Error : ${error.message}`;
+    response.status = 500
   }
+
+  return response;
 };
 
 
 export const getSites = async () => {
+  
+  let response = {
+    status : 200,
+  }
+  
   try {
     const sites = await siteModel.find();
 
     if(!sites) {
-      return { status : 200 , message : "No Sites found", sites };
+      response.error = "No sites found";
+      response.status = 404;
+      return response;
     }
-    return { status : 200, data : sites }
+    
+    response.data = sites;
 
   } catch (error) {
-    return { status : 500 , message : `Internal server Error. Veuillez contacter l'administrateur du site ` };
+    response.error = `Internal server Error : ${error.message}`;
+    response.status = 500;
   }
+  return response;
 }
 
 
-export const updateSite = async (siteId, siteData) => {
+export const updateSite = async (id, siteData) => {
+  let response = {
+    status : 200,
+  }
+  
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      response.error = 'Invalid or missing site ID';
+      response.status = 400;
+      return response
+    }
+    
   try {
-    // Vérification de l'ID
-    if (!siteId || !mongoose.Types.ObjectId.isValid(siteId)) {
-      return { status: 400, error: 'Invalid or missing site ID' };
-    }
-
-    // Vérification du corps de la requête
-    if (!siteData || typeof siteData !== 'object') {
-      return { status: 400, error: 'Invalid or missing request body' };
-    }
 
     const updatedSite = await siteModel.findByIdAndUpdate(
-      siteId,
-      getChangedFields(siteData),
+      id,
+      siteData,
       { new: true }
     );
 
     if (!updatedSite) {
-      return { status: 404, error: 'Site not found' };
+      response.error = 'Site not found '
+      response.status = 404;
+      return response
     }
 
-    return { status: 200, data: updatedSite };
-
+    response.data = updatedSite
   } catch (error) {
-    return { status: 500, error: 'Internal server error => ' + error.message };
+    response.error = `Internal server Error : ${error.message}`;
+    response.status = 500;
   }
+  return response;
 };
 

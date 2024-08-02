@@ -10,13 +10,18 @@ export const Login = () => {
 
   const onFinish = (values) => {
     login(values)
-      .then(() => {
-        navigate("/");
+      .then((data) => {
+        /*if(data.status !== 200){
+          message.error(data.message)
+            .then(() => console.log("error handling"))
+        }else{*/
+          navigate("/");
+        /*}*/
       })
-      .catch(() => {
-        message.error("Login failed");
+      /*.catch(() => {
+        message.error("Login failed")
         navigate("/login");
-      });
+      });*/
   };
 
   useEffect(() => {

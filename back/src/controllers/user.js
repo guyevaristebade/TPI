@@ -25,7 +25,8 @@ export const register = async (userData) => {
             }
         }
 
-        const hashedPassword = await bcrypt.hash(userData.password, 10);
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(userData.password, salt);
         const newAgent = new User(sanitizeFilter({
             name: userData.name,
             password: hashedPassword,
@@ -51,13 +52,14 @@ export const deleteUser = async (_id) => {
 
     try {
         const agent = await User.findOneAndDelete(sanitizeFilter({ _id }));
+
         if (!agent) {
             response.status = 400
             response.error = 'User Not found'
             return response
         }
 
-        response.data = { message: "User deleted successfully" };
+        response.data = agent;
 
     } catch (e) {
         response.status = 500
@@ -94,25 +96,28 @@ export const getAllAgents = async () => {
     return response
 };
 
-export const isLoggedIn = (req, res, next) => {
+export const editUser = async (oldPassword, newPassword) =>{
     let response = {
-        status: 200
-    };
-    const useSecureAuth = process.env.NODE_ENV !== 'development';
-
-    if (req.cookies['token-auth']) {
-        res.cookie('token-auth', req.cookies['token-auth'], {
-            maxAge: 31 * 24 * 3600 * 1000,
-            httpOnly: useSecureAuth,
-            secure: useSecureAuth,
-            domain : process.env.COOKIE_DOMAIN,
-            sameSite: "None"
-        });
+        status : 200
     }
 
-    response.data = { agent: req.user, token: req.cookies['token-auth'] };
+    let validation = passwordValidators(newPassword);
+    for (const el of validation) {
+        if (!el.validator) {
+            response.status = 400
+            response.error = el.message
+            return response
+        }
+    }
 
-    return res.status(response.status).send(response.data || response.error);
-};
+    try{
+        const user = await User.findById(userId).exec();
+        const password = user.password
 
+    }catch (e) {
+        response.status = 500
+        response.error = 'Internal server error'
+    }
 
+    return response;
+}

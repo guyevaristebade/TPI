@@ -1,11 +1,12 @@
 import express from 'express';
-import { register, deleteUser, getAllAgents } from "../controllers/index.js";
-import { authenticated } from "../helpers/index.js";
-import { User } from "../models/index.js";
+import {deleteUser, getAllAgents, register} from "../controllers/index.js";
+import {authenticated, passwordValidators} from "../helpers/index.js";
+import {User} from "../models/index.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const userRouter = express.Router();
+const useSecureAuth = process.env.NODE_ENV !== 'development';
 
 userRouter.post('/register', async (req, res) => {
     const userData = req.body;
@@ -15,8 +16,9 @@ userRouter.post('/register', async (req, res) => {
 });
 
 userRouter.post('/login', async (req, res) => {
-
-    const useSecureAuth = process.env.NODE_ENV !== 'development';
+    let response = {
+        status : 200
+    }
 
     if (!req.body.name || !req.body.password) {
         return res.status(400).send('Username and password are required');
@@ -26,12 +28,16 @@ userRouter.post('/login', async (req, res) => {
         const user = await User.findOne({ name: req.body.name }).exec();
 
         if (!user) {
-            return res.status(401).send('Username or password incorrect');
+            response.error = "Nom / Mot de passe incorrect"
+            response.status = 401
+            return response;
         }
 
         const validPass = await bcrypt.compare(req.body.password, user.password);
         if (!validPass) {
-            return res.status(401).send('Username or password incorrect');
+            response.error = "Nom / Mot de passe incorrect"
+            response.status = 401
+            return response;
         }
 
         const { password, ...tokenContent } = user.toObject();
@@ -43,13 +49,14 @@ userRouter.post('/login', async (req, res) => {
             maxAge: 31 * 24 * 3600 * 1000,
             httpOnly: true,
             secure: useSecureAuth,
-            domain : useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
+            domain : process.env.COOKIE_DOMAIN,
             sameSite: "None"
         });
 
         response.data = { user: tokenContent, token };
     } catch (error) {
-        return res.status(500).send('Internal server error ' + error.message);
+        response.error = "Internal server error"
+        response.status = 500
     }
 
     return res.status(response.status).send(response.data || response.error);
@@ -57,10 +64,8 @@ userRouter.post('/login', async (req, res) => {
 
 userRouter.get('/users', authenticated,async (req, res) => {
     const result = await getAllAgents();
-    if (result.status !== 200) {
-        return res.status(result.status).json({ message: result.message });
-    }
-    res.status(200).json({ agents: result.data });
+
+    res.status(200).send(result.data  || result.error);
 });
 
 userRouter.get('/is-logged-in', authenticated, async (req, res) => {
@@ -79,12 +84,10 @@ userRouter.get('/is-logged-in', authenticated, async (req, res) => {
 
 userRouter.delete('/logout', authenticated, (req, res) => {
 
-    const useSecureAuth = process.env.NODE_ENV !== 'development';
-
     res.clearCookie('token', {
         httpOnly: true,
         secure: useSecureAuth,
-        domain: useSecureAuth ? process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
+        domain: process.env.COOKIE_DOMAIN,
         sameSite: 'None'
     });
 
@@ -92,13 +95,61 @@ userRouter.delete('/logout', authenticated, (req, res) => {
 });
 
 
-userRouter.delete('/:_id', async (req, res) => {
+userRouter.delete('/:_id', authenticated, async (req, res) => {
     const { _id } = req.params;
     const result = await deleteUser(_id);
 
-    if (result.status !== 200) {
-        return res.status(result.status).json({ message: result.message });
-    }
-
     res.status(200).json({ message: result.message });
 });
+
+userRouter.post('/change-password', authenticated, async (req, res) => {
+    const response = {
+        status: 200
+    }
+
+    const { currentPassword, newPassword } = req.body;
+
+    // Validate the new password
+    let validation = passwordValidators(newPassword);
+    for (const el of validation) {
+        if (!el.validator) {
+            response.status = 400;
+            response.error = el.message;
+            return res.status(response.status).send(response.error);
+        }
+    }
+
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            response.status = 404;
+            response.error = 'User not found';
+            return res.status(response.status).send(response.error);
+        }
+
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            response.status = 401;
+            response.error = 'Current password is incorrect';
+            return res.status(response.status).send(response.error);
+        }
+
+
+        const salt = await bcrypt.genSalt(10);
+        // Update the user's password
+        user.password = await bcrypt.hash(newPassword, salt);
+        await user.save();
+
+        response.data = user;
+    } catch (error) {
+        response.error = "Internal server error: " + error.message;
+        response.status = 500;
+    }
+
+    res.status(response.status).send(response.error || response.data);
+});
+
+
