@@ -2,47 +2,33 @@ import express from "express";
 import { createSite, deleteSite, getSites, updateSite } from "../controllers/index.js";
 export const siteRouter = express.Router();
 
+// GET REQUEST
 siteRouter.get('/', async (req, res) => {
-  const result = await getSites();
-
-  if (result.status !== 200) {
-    return res.status(result.status).json({ message: result.message})
-  }else{
-    res.status(result.status).json({sites : result.data })
-  }
+  const response = await getSites();
+  res.status(response.status).send(response.data || response.error);
 });
 
-// create site
+
+// POST REQUEST
 siteRouter.post("/", async (req, res) => {
   const siteData = req.body;
-  const result = await createSite(siteData);
-
-  // Use only one response send
-  if (result.status !== 200) {
-    res.status(result.status).json({ message: result.message });
-  } else {
-    res.status(200).json({ message: result.message });
-  }
+  const response = await createSite(siteData);
+  res.status(response.status).send(response.data || response.error);
 });
 
 
-
-
-siteRouter.delete("/:siteId", async (req, res) => {
-  const { siteId }  = req.params;
-  const result= await deleteSite(siteId);
-
-  if(result.status !== 200){
-    res.status(result.status).json({ message: result.message });
-  }else{
-    res.status(200).json({ message: result.message });
-  }
+// DELETE REQUEST
+siteRouter.delete("/:id", async (req, res) => {
+  const { id }  = req.params;
+  const response= await deleteSite(id);
+  res.status(response.status).send(response.data || response.error);
 })
 
-siteRouter.put("/:siteId", async (req, res) => {
-  const { siteId }  = req.params;
-  const siteData = req.body
-  const response = await updateSite(siteId,siteData)
+// PUT REQUEST
+siteRouter.put("/:id", async (req, res) => {
+  const { id }  = req.params;
+  const siteData = req.body;
+  const response = await updateSite(id,siteData);
 
   res.status(response.status).send(response.data || response.error)
 })

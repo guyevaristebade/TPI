@@ -1,23 +1,10 @@
 import mongoose from 'mongoose';
 
-const fileSchema = mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  mimetype: {
-    type: String,
-    required: true,
-  },
-  data: {
-    type: String,
-    required: true,
-  },
-  device: {
-    type: mongoose.Types.ObjectId,
-    ref: 'device',
-    required: true
-  }
+const imageSchema = new mongoose.Schema({
+  data: Buffer,
+  contentType: String,
+  filename: String,
+  createdAt: { type: Date, default: Date.now }
 });
 
-export const fileModel = mongoose.model('file', fileSchema);
+export const Image = mongoose.model('Image', imageSchema);

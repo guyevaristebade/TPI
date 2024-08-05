@@ -12,7 +12,6 @@ export const Dashboard = () => {
   const [repartition, setRepartition] = useState([])
 
 
-
   useEffect(() => {
     getStatistics()
       .then((data) =>{

@@ -1,33 +1,48 @@
-import React from 'react';
-import {Form, Input, Button, message, Flex, Result} from 'antd';
-import {createSite, getAddress} from '../api';
+import React, {useEffect, useState} from 'react';
+import {Form, Input, Button, message, Flex, Result, Select} from 'antd';
+import {createSite, getAddress, searchAddress} from '../api';
 import {useAuth} from "../hooks";
 const { Item } = Form
 
 export const AddSite = ({ fetchSites }) => {
   const [form] = Form.useForm();
   const { user } = useAuth();
+  const [selectOptions, setSelectOptions] = useState({})
+  const [searchValue, setSearchValue] = useState("")
 
   const onFinish = async (values) => {
     try {
-      const data = await getAddress(form.getFieldValue('complement'), form.getFieldValue('code'));
-
-      if (data.length > 0) {
-        const newAddress = data[0].properties.label;
-
-        const { complement, code, ...rest } = values;
-        const updatedValues = { ...rest, address: newAddress };
-
-        await createSite(updatedValues);
+        await createSite(values);
         message.success("Site created successfully");
         form.resetFields();
-      } else {
-        message.error("L'adresse que vous avez entrée n'est pas correcte");
-      }
+
     } catch (error) {
       message.error("Failed to create site");
     }
   };
+
+
+
+  const handleSearch = (value) => {
+    setSearchValue(value);
+  };
+
+
+  useEffect(() => {
+    if(searchValue !== ""){
+      searchAddress(searchValue)
+        .then((data) => {
+          const features = data.features;
+          const options = features.map((el) => ({
+            value: el.properties.label,
+            label: el.properties.label
+          }));
+
+          setSelectOptions(options);
+        })
+        .catch((err) => console.error(err.message))
+    }
+  }, [searchValue]);
 
 
   return (
@@ -46,30 +61,19 @@ export const AddSite = ({ fetchSites }) => {
                 label="Nom du site"
                 rules={[{required: true, message: 'Veuillez entrer le nom du site'}]}
               >
-                <Input placeholder="Atalian Paris"/>
+                <Input placeholder="Atalian Paris" size="large"/>
               </Item>
-              <div>
-                <Flex gap={20}>
-                  <Item
-                    style={{width: "100%"}}
-                    name="complement"
-                    label="Complément d'adresse"
-                    rules={[{required: true, message: 'Veuillez entrer le complément d\'adresse'}]}
-                  >
-                    <Input placeholder="34 rue des praillons"/>
-
-                  </Item>
-                  <Item
-                    style={{width: "100%"}}
-                    name="code"
-                    label="Code postal"
-                    rules={[{required: true, message: 'Veuillez entrer le code postal'}]}
-                  >
-                    <Input type="number" placeholder="77167"/>
-
-                  </Item>
-                </Flex>
-              </div>
+              <Item
+                name="address"
+              >
+                <Select
+                  placeholder="5 square du rouq 77890, Roubaix"
+                  showSearch size="large"
+                  options={selectOptions}
+                  onSearch={handleSearch}
+                  filterOption={false}
+                />
+              </Item>
               <Item>
                 <Button type="primary" htmlType="submit">
                   Enregistrer

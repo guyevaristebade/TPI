@@ -1,39 +1,41 @@
 import express from 'express';
-import {createDevice, deleteDevice, getDeviceById, getDevices, updateDevice} from "../controllers/index.js";
+import {createDevice, deleteDevice, getDevices, updateDevice} from "../controllers/index.js";
 
 export const deviceRouter = express.Router();
 
 deviceRouter.post('/', async (req, res) => {
   const deviceData = req.body;
-  const response = await createDevice(deviceData)
+  const result = await createDevice(deviceData)
 
-  res.status(response.status).send(response.data || response.error);
+  res.status(result.status).send(result)
 });
 
+deviceRouter.delete('/:deviceId',async (req, res) => {
+  const { deviceId } = req.params
+  const result = await deleteDevice(deviceId)
 
-deviceRouter.put('/:id',async (req, res) => {
-  const { id } = req.params;
+  if (result.status !== 200) {
+    return res.status(result.status).json({ message: result.message });
+  }
+
+  res.status(result.status).json({ message: result.message})
+});
+
+deviceRouter.put('/:deviceId',async (req, res) => {
+  const { deviceId } = req.params;
   const deviceData = req.body;
 
-  const response = await updateDevice(id, deviceData);
+  const result = await updateDevice(deviceId, deviceData);
 
-  res.status(response.status).send(response.data || response.error)
-});
-
-deviceRouter.delete('/:id',async (req, res) => {
-  const { id } = req.params
-  const response = await deleteDevice(id)
-
-  res.status(response.status).send(response.data || response.error);
+  res.status(result.status).send(result || result)
 });
 
 deviceRouter.get('/', async (req, res) => {
-  const response = await getDevices();
-  res.status(response.status).send(response.data || response.error)
-});
+  const result = await getDevices();
 
-deviceRouter.get('/:id', async (req, res) => {
-  const { id } = req.params
-const response = await getDeviceById(id);
-  res.status(response.status).send(response.data || response.error)
-})
+  if (result.status !== 200) {
+    return res.status(result.status).json({ message: result.message})
+  }else{
+    res.status(result.status).json({ device : result.data })
+  }
+});
