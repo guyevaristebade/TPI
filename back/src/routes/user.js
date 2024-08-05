@@ -43,11 +43,12 @@ userRouter.post('/login', async (req, res) => {
             maxAge: 31 * 24 * 3600 * 1000,
             httpOnly: true,
             secure: useSecureAuth,
-            domain : useSecureAuth ?  process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
+            domain : process.env.COOKIE_DOMAIN,
             sameSite: "None"
         });
 
         response.data = { user: tokenContent, token };
+
     } catch (error) {
         return res.status(500).send('Internal server error ' + error.message);
     }
@@ -84,7 +85,7 @@ userRouter.delete('/logout', authenticated, (req, res) => {
     res.clearCookie('token', {
         httpOnly: true,
         secure: useSecureAuth,
-        domain: useSecureAuth ? process.env.COOKIE_DOMAIN : process.env.LOCAL_COOKIE_DOMAIN,
+        domain: process.env.COOKIE_DOMAIN,
         sameSite: 'None'
     });
 

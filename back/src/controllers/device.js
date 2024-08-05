@@ -1,8 +1,6 @@
 import { deviceModel } from "../models/index.js";
 import mongoose, { sanitizeFilter }  from "mongoose";
 import { lineRegex } from "../helpers/index.js";
-import {getChangedFields} from "../helpers/helpers.js";
-
 
 export const createDevice = async (deviceData) => {
   let response = {
@@ -35,7 +33,7 @@ export const createDevice = async (deviceData) => {
 
     await device.save();
 
-    response.data = "Device created successfully";
+    response.data = device;
   } catch (error) {
     response.status = 500;
     response.error = "Internal Server error "
@@ -45,82 +43,106 @@ export const createDevice = async (deviceData) => {
 };
 
 
+export const deleteDevice = async (id) => {
+  let response = {
+    status : 200
+  }
 
-export const deleteDevice = async (deviceId) => {
+  if(!mongoose.isValidObjectId((id))){
+    response.status = 400;
+    response.error = "Invalid Object ID"
+    return response;
+  }
   try {
-    const deletedDevice = await deviceModel.findByIdAndDelete(sanitizeFilter(deviceId));
+    const deletedToDevice = await deviceModel.findByIdAndDelete(id);
 
-    if (!deletedDevice) {
-      return { status : 404, message : "Device not found"};
+    if (!deletedToDevice) {
+      response.status = 404;
+      response.error = "Device not found"
+      return response;
     }
 
-    return { status : 200, message : "Device deleted successfully" };
+    response.data = { message : "Device deleted successfully" };
 
   } catch (error) {
-    return { status : 500, message : "Internal Server Error "};
+    response.error = `Internal server error ${error.message}`
+    response.status = 500;
   }
+  return response;
 };
 
 export const getDevices = async () => {
-  try{
-    const device = await deviceModel.find().populate("site_id");
-
-    if(!device){
-      return { status : 404, message : "Device not found "};
-    }
-
-    return { status : 200, data : device };
-  }catch (e) {
-    return { status : 500, message : "Internal Server Error "};
-  }
-}
-
-
-export const updateDevice = async (deviceId, deviceData) => {
   let response = {
     status: 200
   };
 
   try {
+    const device = await deviceModel.find().populate("site_id");
 
-    const deviceDataValues = Object.values(deviceData);
-    if(deviceDataValues.length === 0) {
-      response.status = 400
-      response.error = "Veuillez remplir au moins 1 champs"
-      return response
+    if (!device || device.length === 0) {
+      response.status = 404;
+      response.error = "Device not found";
+    } else {
+      response.data = device;
     }
-    console.log(deviceDataValues)
-
-    if (!deviceId || !mongoose.Types.ObjectId.isValid(deviceId)) {
-      response.error = "Invalid or missing device ID";
-      response.status = 400;
-      return response;
-    }
-
-
-    if (!deviceData || typeof deviceData !== 'object') {
-      response.error = "Invalid or missing request body";
-      response.status = 400;
-      return response;
-    }
-
-
-    const updatedDevice = await deviceModel.findByIdAndUpdate(
-      deviceId,
-      getChangedFields(deviceData),
-      { new: true }
-    );
-
-    if (!updatedDevice) {
-      response.error = "Bad request device not updated";
-      response.status = 400;
-      return response;
-    }
-
-    response.data = updatedDevice;
 
   } catch (error) {
-    response.error = "Internal server error => " + error.message;
+    response.error = `Internal server error: ${error.message}`;
+    response.status = 500;
+  }
+
+  return response;
+};
+
+export const getDeviceById = async (id) => {
+  let response = {
+    status: 200
+  };
+
+  try {
+    const device = await deviceModel.findById(id).populate("site_id");
+
+    if (!device) {
+      response.status = 404;
+      response.error = "Device not found";
+      return response
+    }
+
+    response.data = device;
+
+  } catch (error) {
+    response.error = `Internal server error: ${error.message}`;
+    response.status = 500;
+  }
+
+  return response;
+};
+
+export const updateDevice = async (id, deviceData) => {
+  let response = {
+    status: 200
+  };
+
+  if(!mongoose.isValidObjectId(id)){
+    response.status = 400;
+    response.error = "Invalid Object ID"
+    return response;
+  }
+
+  try {
+
+    const deviceToUpdate = await deviceModel.findByIdAndUpdate(id, deviceData,{ new : true })
+
+    if(!deviceToUpdate) {
+      response.status = 400
+      response.error = "device doesn't exist"
+      return response;
+    }
+
+    response.data = deviceToUpdate;
+
+  } catch (error) {
+    response.error = ` Internal server error => + ${error.message}` ;
     response.status = 500;
   }
 

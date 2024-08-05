@@ -3,7 +3,7 @@ import { passwordValidators } from "../helpers/index.js";
 import bcrypt from "bcryptjs";
 import { sanitizeFilter } from 'mongoose';
 
-export const register = async (userData) => {
+export const  register = async (userData) => {
     let response = {
         status : 200
     }
@@ -100,8 +100,8 @@ export const isLoggedIn = (req, res, next) => {
     };
     const useSecureAuth = process.env.NODE_ENV !== 'development';
 
-    if (req.cookies['token-auth']) {
-        res.cookie('token-auth', req.cookies['token-auth'], {
+    if (req.cookies['token']) {
+        res.cookie('token', req.cookies['token'], {
             maxAge: 31 * 24 * 3600 * 1000,
             httpOnly: useSecureAuth,
             secure: useSecureAuth,
@@ -110,7 +110,7 @@ export const isLoggedIn = (req, res, next) => {
         });
     }
 
-    response.data = { agent: req.user, token: req.cookies['token-auth'] };
+    response.data = { agent: req.user, token: req.cookies['token'] };
 
     return res.status(response.status).send(response.data || response.error);
 };
