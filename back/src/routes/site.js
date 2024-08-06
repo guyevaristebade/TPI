@@ -1,9 +1,10 @@
 import express from "express";
 import { createSite, deleteSite, getSites, updateSite } from "../controllers/index.js";
+import {authenticated} from "../helpers/index.js";
 export const siteRouter = express.Router();
 
 // GET REQUEST
-siteRouter.get('/', async (req, res) => {
+siteRouter.get('/', authenticated, async (req, res) => {
   const response = await getSites();
   res.status(response.status).send(response.data || response.error);
 });

@@ -1,4 +1,4 @@
-import {deviceModel, siteModel} from "../models/index.js";
+import { deviceModel, siteModel } from "../models/index.js";
 import mongoose,{ sanitizeFilter } from 'mongoose'
 
 export const createSite = async (siteData) => {
@@ -19,7 +19,7 @@ export const createSite = async (siteData) => {
 
     await saveSite.save();
 
-    response.data = saveSite;
+    response.data =  saveSite
 
   } catch (error) {
     response.error = `Internal server Error : ${error.message}`;
@@ -57,7 +57,7 @@ export const deleteSite = async (id) => {
       await siteModel.findByIdAndDelete(id);
     }
 
-    response.data = { message : "Site deleted successfully" }
+    response.data = "Site deleted successfully"
 
   } catch (error) {
     response.error = `Internal server Error : ${error.message}`;
