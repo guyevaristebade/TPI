@@ -1,7 +1,6 @@
 import { deviceModel } from "../models/index.js";
 import mongoose, { sanitizeFilter }  from "mongoose";
 import { lineRegex } from "../helpers/index.js";
-import {getChangedFields} from "../helpers/helpers.js";
 
 
 export const createDevice = async (deviceData) => {
@@ -107,7 +106,7 @@ export const updateDevice = async (deviceId, deviceData) => {
 
     const updatedDevice = await deviceModel.findByIdAndUpdate(
       deviceId,
-      getChangedFields(deviceData),
+      deviceData,
       { new: true }
     );
 
