@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, Button, message, Flex, Result, Select} from 'antd';
-import {createSite, getAddress, searchAddress} from '../api';
+import {createSite, searchAddress} from '../api';
 import {useAuth} from "../hooks";
 const { Item } = Form
 

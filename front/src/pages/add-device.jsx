@@ -14,13 +14,12 @@ export const AddDevice = () => {
     fetchSites();
   }, []);
 
-  const fetchSites = async () => {
-    try {
-      const response = await getSites();
-      setSiteList(response.sites);
-    } catch (error) {
-      message.error(error.message);
-    }
+  const fetchSites = () => {
+    getSites()
+      .then((data) =>{
+        setSiteList(data)
+      })
+      .catch((error) => message("Une erreur s'est produite, Veuillez contacter le développeur"))
   };
 
   const onFinish = async (values) => {
