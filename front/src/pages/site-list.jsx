@@ -37,13 +37,14 @@ export const SiteList = () => {
     fetchSites();
   }, []);
 
-  const fetchSites = async () => {
-    try {
-      const response = await getSites();
-      setSiteList(response.sites);
-    } catch (error) {
-      message.error("Failed to fetch sites");
-    }
+  const fetchSites =  () => {
+    getSites()
+      .then((data ) => {
+        setSiteList(data)
+      })
+      .catch(() => {
+        setSiteList([]);
+      })
   };
 
   const onDelete = async (id) => {
