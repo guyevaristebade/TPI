@@ -82,7 +82,7 @@ export const SiteList = () => {
       title: "Liste des Sites",
       headers: ['Nom du site', 'Adresse'],
       data: pdfData,
-      footerText: user.name || "Utilisateur inconnu", // Assurez-vous d'avoir une valeur par défaut
+      footerText: user.name,
       fileName: 'liste_des_sites.pdf'
     });
   };

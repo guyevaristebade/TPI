@@ -4,13 +4,10 @@ import {
   PlusOutlined,
   UserAddOutlined,
   UserOutlined,
-  UnorderedListOutlined,
-  BankOutlined,
+  UnorderedListOutlined, BankOutlined, EditOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { useAuth } from "../hooks";
 
-const { user } = useAuth();
 
 export const menuItems = [
   {
@@ -23,11 +20,11 @@ export const menuItems = [
     icon: <BankOutlined />,
     label: "Site",
     children: [
-      ...(user && user.permission === 10 ? [{
+      {
         key: 'add-site',
         icon: <PlusOutlined />,
         label: <Link to='/add-site'>Ajouter un site</Link>,
-      }] : []),
+      },
       {
         key: 'site-list',
         icon: <UnorderedListOutlined />,
@@ -40,11 +37,11 @@ export const menuItems = [
     icon: <MobileOutlined />,
     label: "PTI",
     children: [
-      ...(user && user.permission === 10 ? [{
+      {
         key: 'add-pti',
         icon: <PlusOutlined />,
         label: <Link to='/add-pti'>Ajouter des pti</Link>,
-      }] : []),
+      },
       {
         key: 'pti-list',
         icon: <UnorderedListOutlined />,
@@ -57,11 +54,11 @@ export const menuItems = [
     icon: <UserOutlined />,
     label: "Utilisateur",
     children: [
-      ...(user && user.permission === 10 ? [{
+      {
         key: 'add-agent',
         icon: <UserAddOutlined />,
         label: <Link to='/add-agent'>Créer des utilisateurs</Link>
-      }] : []),
+      },
       {
         key: 'agent-list',
         icon: <UnorderedListOutlined />,
