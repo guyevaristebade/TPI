@@ -1,5 +1,4 @@
 import { instance } from '../helpers';
-import axios from 'axios'
 
 export const createSite = async  (siteData) =>{
   try{
@@ -30,16 +29,6 @@ export const getSites = async () =>{
   }
 }
 
-
-
-export const getAddress = async (complement, code) =>{
-  try{
-    const response = await axios.get(`https://api-adresse.data.gouv.fr/search/?q=${complement}&postcode=${code}`)
-    return response.data.features
-  }  catch (e) {
-    return e.message;
-  }
-}
 
 
 export const updateSite = async (id, siteData) =>{

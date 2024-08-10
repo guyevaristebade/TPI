@@ -99,7 +99,7 @@ export const SiteList = () => {
           <div style={{ textAlign: 'center', padding: '5rem' }}>
             <Empty description="La liste des sites est vide" />
             <Button icon={<PlusOutlined />} type="primary">
-              <Link to="/ajout-site">Ajoutez un site</Link>
+              <Link to="/add-site">Ajoutez un site</Link>
             </Button>
           </div>
         ) : (

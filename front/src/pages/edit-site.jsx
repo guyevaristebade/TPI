@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
-import {Button, Flex, Form, Input, message, Select, Typography} from 'antd'
-import {useNavigate, useParams} from "react-router-dom";
-import {createSite, getAddress, searchAddress, updateSite} from "../api";
+import {Button, Form, Input, message, Select, Typography} from 'antd'
+import { useParams} from "react-router-dom";
+import { searchAddress, updateSite} from "../api";
 
 const { Title } = Typography
 const { Item } = Form;
