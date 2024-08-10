@@ -57,7 +57,7 @@ export const deleteSite = async (id) => {
       await siteModel.findByIdAndDelete(id);
     }
 
-    response.data = "Site deleted successfully"
+    response.data = siteToDelete
 
   } catch (error) {
     response.error = `Internal server Error : ${error.message}`;
