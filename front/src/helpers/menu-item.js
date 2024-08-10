@@ -6,7 +6,6 @@ import {
   UserOutlined,
   UnorderedListOutlined,
   BankOutlined,
-  EditOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useAuth } from "../hooks";
