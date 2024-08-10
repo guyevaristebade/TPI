@@ -48,14 +48,16 @@ export const SiteList = () => {
       })
   };
 
-  const onDelete = async (id) => {
-    try {
-      await deleteSite(id);
-      message.success("Site deleted successfully");
-      fetchSites();
-    } catch (error) {
-      message.error("Failed to delete site");
-    }
+  const onDelete =  (id) => {
+
+    deleteSite(id)
+      .then((data) => {
+        setSiteList((prevState) => prevState.filter((s) => s.id !== data._id))
+        message.success('Site supprimé avec succès')
+      })
+      .catch((error) => {
+        message.error("Une erreur s'est produite lors de la suppression, veuillez contacter le développeur")
+      })
   };
 
   const columns = [
