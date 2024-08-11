@@ -67,7 +67,7 @@ export const AgentList = () =>{
   };
 
 
-  const usersWithIds = users.map((user, index) => ({
+  const usersWithIds = users === [] ? [] : users.map((user, index) => ({
     ...user,
     key: index + 1,
   }));
