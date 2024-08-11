@@ -1,7 +1,7 @@
-import { User } from "../models/index.js";
-import { passwordValidators } from "../helpers/index.js";
+import {User} from "../models/index.js";
+import {passwordValidators} from "../helpers/index.js";
 import bcrypt from "bcryptjs";
-import { sanitizeFilter } from 'mongoose';
+import {sanitizeFilter} from 'mongoose';
 
 export const register = async (userData) => {
     let response = {
@@ -66,7 +66,7 @@ export const deleteUser = async (_id) => {
     return response
 };
 
-export const getAllAgents = async () => {
+export const getAllAgents = async (userId) => {
     let response = {
         status : 200
     }
@@ -85,7 +85,7 @@ export const getAllAgents = async () => {
             return agentWithoutPassword;
         });
 
-        response.data = agents
+        response.data = agents.filter(agent => agent._id !== userId)
     } catch (e) {
         response.status = 500
         response.error = 'Internal server error'

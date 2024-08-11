@@ -64,7 +64,8 @@ userRouter.post('/login', async (req, res) => {
 });
 
 userRouter.get('/users', authenticated,async (req, res) => {
-    const result = await getAllAgents();
+    const userId = req.user.user._id
+    const result = await getAllAgents(userId);
 
     res.status(200).send(result.data  || result.error);
 });

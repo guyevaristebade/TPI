@@ -1,5 +1,4 @@
 export * from './login'
-export * from './user'
 export * from './unknown'
 export * from './dashboard'
 export * from './add-site'
