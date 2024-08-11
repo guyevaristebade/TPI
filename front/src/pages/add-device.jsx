@@ -29,7 +29,7 @@ export const AddDevice = () => {
         message.success("Device registered successfully");
         form.resetFields();
       }else{
-        message.error(response.message + " ->  " + response.status);
+        message.error("Une erreur s'est produite, veuillez contacter le développeur");
       }
     } catch (error) {
       message.error("Failed to create device");

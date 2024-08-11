@@ -7,7 +7,8 @@ import {useAuth} from "../hooks";
 const { Title } = Typography;
 export const AgentList = () =>{
   const [users, setUsers] = useState([]);
-  const {user } = useAuth()
+  const { user } = useAuth()
+
   const onDelete = (id) =>{
     deleteUser(id)
       .then(() => {
@@ -17,7 +18,7 @@ export const AgentList = () =>{
       .catch((e) => message.error("Une erreur s'est produite lors de la suppression "))
   }
 
-  const actionOrNot = user.permissions < 10 ? {} : {
+  const actionOrNot = user && user.permissions >= 10  ? {
     title: 'Action',
     key: 'action',
     align: "center",
@@ -31,7 +32,7 @@ export const AgentList = () =>{
         <Button type="primary" danger icon={<DeleteFilled />} />
       </Popconfirm>
     )
-  }
+  } :  {};
 
   const columns = [
     {
@@ -55,11 +56,14 @@ export const AgentList = () =>{
     actionOrNot
   ];
 
-  const fetchUsers = async () => {
-    const result = await getAllUser();
-    if (result && Array.isArray(result)) {
-      setUsers(result);
-    }
+  const fetchUsers = () => {
+    getAllUser()
+      .then((u) => {
+        setUsers(u)
+      })
+      .catch((err) => {
+        message.error(err)
+      })
   };
 
 
