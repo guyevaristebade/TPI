@@ -14,7 +14,6 @@ export const AuthenticationProvider = ({ children }) => {
     return loginApi(userData)
       .then((data) => {
         setUser(data.user);
-        console.log(data)
       })
       .catch((error) => {
         setUser(undefined);

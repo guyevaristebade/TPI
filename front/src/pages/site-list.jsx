@@ -35,7 +35,6 @@ export const SiteList = () => {
 
   useEffect(() => {
     fetchSites();
-    console.log(siteList)
   }, []);
 
   const fetchSites =  () => {

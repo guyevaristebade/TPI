@@ -2,7 +2,7 @@ import React from 'react';
 import {Outlet} from 'react-router-dom';
 import { SideBar } from ".";
 import '../assets/layout.scss'
-import { Flex, Layout } from "antd";
+import { Layout } from "antd";
 
 const { Content } = Layout
 export const MainLayout = () =>{
