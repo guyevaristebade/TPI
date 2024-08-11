@@ -40,7 +40,7 @@ export const createUser = async (values) => {
 export const getAllUser = async () => {
   try {
     const response = await instance.get("/auth/users")
-    return response.data.agents
+    return response.data
   }catch (error) {
     return error.message;
   }

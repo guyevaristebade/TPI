@@ -9,21 +9,17 @@ export const AddAgent = () =>{
 
   const [form] = Form.useForm();
   const {user} = useAuth();
+
   const onFinish = (values) => {
     const newValues = {...values, permissions : parseInt(values.permissions)}
     createUser(newValues)
-      .then((data) => {
-        if(data.status === 200){
-          message.success("utilisateur enregistré avec succès")
-          form.resetFields();
-        }else{
-          message.error(data.error)
-        }
+      .then(() => {
+        message.success("utilisateur enregistré avec succès")
+        form.resetFields();
       })
-      .catch(() => {
-        message.error("Une erreur s'est produite lors de l'enregistrement d'un agent")
+      .catch((error) => {
+        message.error("Une erreur s'est produite lors de l'enregistrement d'un agent,  " + error)
       })
-    console.log(newValues);
   }
 
 

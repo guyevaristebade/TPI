@@ -7,35 +7,28 @@ deviceRouter.post('/', async (req, res) => {
   const deviceData = req.body;
   const result = await createDevice(deviceData)
 
-  res.status(result.status).send(result)
+  res.status(result.status).send(result.data || result.error)
 });
 
 deviceRouter.delete('/:id',async (req, res) => {
   const { id } = req.params
   const result = await deleteDevice(id)
 
-  if (result.status !== 200) {
-    return res.status(result.status).json({ message: result.message });
-  }
-
-  res.status(result.status).json({ message: result.message})
+  res.status(result.status).send(result.data || result.error)
 });
 
-deviceRouter.put('/:deviceId',async (req, res) => {
-  const { deviceId } = req.params;
+deviceRouter.put('/:id',async (req, res) => {
+  const { id } = req.params;
   const deviceData = req.body;
 
-  const result = await updateDevice(deviceId, deviceData);
+  const result = await updateDevice(id, deviceData);
 
-  res.status(result.status).send(result || result)
+  res.status(result.status).send(result.data || result.error)
 });
 
 deviceRouter.get('/', async (req, res) => {
   const result = await getDevices();
 
-  if (result.status !== 200) {
-    return res.status(result.status).json({ message: result.message})
-  }else{
-    res.status(result.status).json({ device : result.data })
-  }
+  res.status(result.status).send(result.data || result.error)
+
 });
