@@ -6,7 +6,7 @@ export const siteRouter = express.Router();
 // GET REQUEST
 siteRouter.get('/', authenticated, async (req, res) => {
   const response = await getSites();
-  res.status(response.status).send(response.data || response.error);
+  res.status(response.status).send(response);
 });
 
 siteRouter.get('/:id', authenticated, async (req, res) => {
@@ -27,7 +27,7 @@ siteRouter.put("/:id", async (req, res) => {
 siteRouter.post("/", async (req, res) => {
   const siteData = req.body;
   const response = await createSite(siteData);
-  res.status(response.status).send(response.data || response.error);
+  res.status(response.status).send(response);
 });
 
 
@@ -35,7 +35,7 @@ siteRouter.post("/", async (req, res) => {
 siteRouter.delete("/:id", async (req, res) => {
   const { id }  = req.params;
   const response= await deleteSite(id);
-  res.status(response.status).send(response.data || response.error);
+  res.status(response.status).send(response);
 })
 
 

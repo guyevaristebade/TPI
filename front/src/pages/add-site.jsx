@@ -11,14 +11,15 @@ export const AddSite = ({ fetchSites }) => {
   const [searchValue, setSearchValue] = useState("")
 
   const onFinish = async (values) => {
-    try {
-        await createSite(values);
-        message.success("Site created successfully");
-        form.resetFields();
-
-    } catch (error) {
-      message.error("Failed to create site");
-    }
+    createSite(values)
+      .then((data) =>{
+        if(data.status !== 200){
+          message.error(data.error)
+        }else{
+          message.success("Site created successfully");
+          form.resetFields();
+        }
+      })
   };
 
 

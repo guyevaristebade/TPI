@@ -39,6 +39,13 @@ export const deleteSite = async (id) => {
   let response = {
     status : 200
   }
+
+  if(!mongoose.isValidObjectId(id)){
+    response.status = 400
+    response.error = 'ID is not valid'
+    return response
+  }
+
   try {
     const siteToDelete = await siteModel.findById(id);
 
@@ -75,7 +82,7 @@ export const getSites = async () => {
   }
   
   try {
-    const sites = await siteModel.find();
+    const sites = await siteModel.find().sort({ site_name: 1 });
 
     if(!sites) {
       response.error = "No sites found";
@@ -83,7 +90,7 @@ export const getSites = async () => {
       return response;
     }
     
-    response.data = sites;
+    response.data = sites
 
   } catch (error) {
     response.error = `Internal server Error : ${error.message}`;

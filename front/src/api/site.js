@@ -9,12 +9,11 @@ export const createSite = async  (siteData) =>{
   }
 }
 
-export const deleteSite = async (_id) =>{
+export const deleteSite = async (id) =>{
   try {
-    const response = await instance.delete(`/site/${_id}`);
+    const response = await instance.delete(`/site/${id}`);
     return response.data;
   }catch (error){
-    console.error(error);
     return error.response.data;
   }
 }

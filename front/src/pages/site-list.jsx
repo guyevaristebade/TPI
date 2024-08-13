@@ -39,23 +39,20 @@ export const SiteList = () => {
 
   const fetchSites =  () => {
     getSites()
-      .then((data ) => {
-        setSiteList(data)
-      })
-      .catch(() => {
-        setSiteList([]);
+      .then(({data}) => {
+          setSiteList(data)
       })
   };
 
   const onDelete =  (id) => {
-
     deleteSite(id)
       .then((data) => {
-        setSiteList((prevState) => prevState.filter((s) => s._id !== id))
-        message.success('Site supprimé avec succès')
-      })
-      .catch((error) => {
-        message.error("Une erreur s'est produite lors de la suppression, veuillez contacter le développeur")
+        if(data.status !== 200){
+          message.error(data.error);
+        }else {
+          setSiteList((prevState) => prevState.filter((s) => s._id !== id));
+          message.success('Site supprimé avec succès');
+        }
       })
   };
 
@@ -96,7 +93,7 @@ export const SiteList = () => {
       {
         siteList.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '5rem' }}>
-            <Empty description="La liste des sites est vide" />
+            <Empty description="La liste des sites est vide"  style={{ marginBottom : "2rem"}}/>
             <Button icon={<PlusOutlined />} type="primary">
               <Link to="/add-site">Ajoutez un site</Link>
             </Button>
