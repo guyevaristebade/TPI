@@ -35,7 +35,7 @@ export const SiteList = () => {
 
   useEffect(() => {
     fetchSites();
-  }, [siteList]);
+  }, []);
 
   const fetchSites =  () => {
     getSites()
