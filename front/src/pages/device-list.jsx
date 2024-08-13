@@ -34,22 +34,26 @@ export const DeviceList = () => {
   };
 
   const fetchDevices = async () => {
-    try {
-      const response = await getDevices();
-      setDevices(response.device);
-    } catch (error) {
-      message.error("Failed to fetch devices");
-    }
+    getDevices()
+      .then(({ data, status, error }) =>{
+        if(status !== 200){
+          message.error(error)
+        }else{
+          setDevices(data)
+        }
+      })
   };
 
-  const deleteDevice = async (id) => {
-    try {
-      await deleteDeviceApi(id);
-      message.success("Device deleted successfully");
-      fetchDevices();
-    } catch (error) {
-      message.error("Error deleting device");
-    }
+  const deleteDevice = (id) => {
+    deleteDeviceApi(id)
+      .then(({ data, status, error }) =>{
+        if(status !== 200){
+          message.error(error)
+        }else{
+          setDevices((prevState) => prevState.filter((dev) => dev._id !== id))
+          message.success("Device deleted successfully")
+        }
+      })
   };
 
   useEffect(() => {

@@ -1,6 +1,5 @@
 import { deviceModel } from "../models/index.js";
 import mongoose, { sanitizeFilter }  from "mongoose";
-import { lineRegex } from "../helpers/index.js";
 
 
 export const createDevice = async (deviceData) => {
@@ -10,27 +9,15 @@ export const createDevice = async (deviceData) => {
 
   try {
 
-    if (!lineRegex.test(deviceData.line)) {
-      response.status = 400;
-      response.error = "Invalid phone number format for line"
-      return response;
-    }
-
-    const existingDevice = await deviceModel.findOne(sanitizeFilter({ line: deviceData.line })).exec();
+    const existingDevice = await deviceModel.findOne(sanitizeFilter({ line: deviceData.line, imei : deviceData.imei })).exec();
 
     if (existingDevice) {
       response.status = 400;
-      response.error = "A device with the same line already exists"
+      response.error = "A device with the same line or same imei already exists"
       return response;
     }
 
-    const device = new deviceModel({
-      line: deviceData.line,
-      brand: deviceData.brand,
-      date: deviceData.date,
-      site_id: deviceData.site_id,
-      state: deviceData.state
-    });
+    const device = new deviceModel(deviceData);
 
     await device.save();
 
@@ -88,6 +75,35 @@ export const getDevices = async () => {
     response.data = devices;
 
   } catch (error) {
+    response.error = "Internal server error => " + error.message;
+    response.status = 500;
+  }
+
+  return response;
+}
+
+export const getDeviceById = async (id) =>{
+  let response = {
+    status: 200
+  };
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    response.error = "Invalid or missing device ID";
+    response.status = 400;
+    return response;
+  }
+
+  try {
+    const device = await deviceModel.findById(id).populate('site_id');
+
+    if(!device){
+      response.error = "Device not found";
+      response.status = 404;
+      return response;
+    }
+
+    response.data = device
+  }catch (error) {
     response.error = "Internal server error => " + error.message;
     response.status = 500;
   }

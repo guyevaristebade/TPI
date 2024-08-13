@@ -37,6 +37,16 @@ export const getSiteById = async (id) =>{
   }
 }
 
+export const getDeviceById = async (id) =>{
+  try{
+    const response = await instance.get(`/device/${id}`);
+    return response.data
+  }catch (error) {
+    return error.response.data;
+  }
+}
+
+
 
 export const updateSite = async (id, siteData) =>{
   try {

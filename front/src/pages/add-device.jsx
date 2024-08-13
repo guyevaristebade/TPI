@@ -16,24 +16,22 @@ export const AddDevice = () => {
 
   const fetchSites = () => {
     getSites()
-      .then((data) =>{
+      .then(({ data }) =>{
         setSiteList(data)
       })
       .catch((error) => message("Une erreur s'est produite, Veuillez contacter le développeur"))
   };
 
-  const onFinish = async (values) => {
-    try {
-      const response = await createDevice(values);
-      if(response.status === 200){
-        message.success("Device registered successfully");
-        form.resetFields();
-      }else{
-        message.error("Une erreur s'est produite, veuillez contacter le développeur");
-      }
-    } catch (error) {
-      message.error("Failed to create device");
-    }
+  const onFinish = (values) => {
+    createDevice(values)
+      .then((data) => {
+        if(data.status !== 200){
+          message.error("Une erreur s'est produite");
+        }else{
+          message.success("PTI crée avec succèss ");
+          form.resetFields();
+        }
+      })
   };
 
   return (
@@ -53,6 +51,13 @@ export const AddDevice = () => {
                 rules={[{required: true, message: 'Veuillez entrer un numéro de téléphone'}]}
               >
                 <Input type="tel" placeholder="+330178675463"/>
+              </Item>
+              <Item
+                name="imei"
+                label="IMEI"
+                rules={[{required: true, message: 'Veuillez entrer un IMEI Valide'}]}
+              >
+                <Input type="text" placeholder="123456789012345"/>
               </Item>
               <Item
                 name="brand"

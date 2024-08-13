@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {Button, Form, Input, message, Select, Typography} from 'antd'
-import {useNavigate, useParams} from "react-router-dom";
-import {getSites, updateDevice} from "../api";
+import { useNavigate, useParams } from "react-router-dom";
+import {getDeviceById, getSites, updateDevice} from "../api";
 
 const { Title } = Typography
 const { Item } = Form;
@@ -16,8 +16,8 @@ export const EditDevice =  () => {
 
   const fetchSite = () => {
     getSites()
-      .then((site) => {
-        setSites(site.sites);
+      .then(({data}) => {
+        setSites(data);
       })
       .catch((error) => console.error(error.message));
   };
@@ -32,7 +32,7 @@ export const EditDevice =  () => {
         }else{
           message.success("PTI mis à jour avec succès");
           form.resetFields();
-          navigate("/liste-pti")
+          navigate("/pti-list")
         }
       })
       .catch((error) => {
@@ -42,6 +42,22 @@ export const EditDevice =  () => {
 
   useEffect(()=> {
     fetchSite();
+
+
+    getDeviceById(id)
+      .then(({data})=> {
+        form.setFieldsValue({
+          line: data.line,
+          imei: data.imei,
+          brand: data.brand,
+          date: data.date.split('T')[0],
+          site_id: data.site_id._id,
+          state: data.state
+        });
+
+        //form.setFieldValue('site_id', data.site_id._id);
+      })
+
   },[id]);
 
 
@@ -58,6 +74,13 @@ export const EditDevice =  () => {
         >
           <Item name="line" label="Line">
             <Input />
+          </Item>
+          <Item
+            name="imei"
+            label="IMEI"
+            rules={[{required: true, message: 'Veuillez entrer un IMEI Valide'}]}
+          >
+            <Input type="text" placeholder="123456789012345"/>
           </Item>
           <Item name="brand" label="Brand">
             <Input />
