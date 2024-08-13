@@ -29,14 +29,21 @@ export const getSites = async () =>{
   }
 }
 
+export const getSiteById = async (id) =>{
+  try{
+    const response = await instance.get(`/site/${id}`);
+    return response.data
+  }catch (error) {
+    return error.response.data;
+  }
+}
 
 
 export const updateSite = async (id, siteData) =>{
   try {
-    const response = await instance.post(`/site/${id}`,siteData);
+    const response = await instance.put(`/site/${id}`,siteData);
     return response.data;
   }catch (error){
-    console.error(error);
     return error;
   }
 }

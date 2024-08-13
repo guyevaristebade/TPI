@@ -126,3 +126,32 @@ export const updateSite = async (id, siteData) => {
   return response;
 };
 
+
+export const getSiteById = async (id) => {
+
+  let response = {
+    status : 200,
+  }
+
+  if(!mongoose.isValidObjectId(id)){
+    response.error = `ID is not a valid`;
+    response.status = 400;
+    return response;
+  }
+
+  try{
+    const site = await siteModel.findById(id);
+
+    if(!site){
+      response.error = `Site not found`;
+      response.status = 404;
+      return response;
+    }
+
+    response.data = site
+  }catch (e) {
+    response.error = `Internal server Error : ${e.message}`;
+    response.status = 500;
+  }
+  return response;
+}

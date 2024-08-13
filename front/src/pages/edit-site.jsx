@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {Button, Form, Input, message, Select, Typography} from 'antd'
 import { useParams} from "react-router-dom";
-import { searchAddress, updateSite} from "../api";
+import {searchAddress, updateSite, get, getSiteById} from "../api";
 
 const { Title } = Typography
 const { Item } = Form;
@@ -13,16 +13,19 @@ export const EditSite =  () => {
   const [searchValue, setSearchValue] = useState("")
 
 
+
   const handlerSubmit = async (values) => {
 
-      const updateSiteData = await updateSite(siteId,values);
+      updateSite(siteId,values)
+        .then((data) =>{
+          if(data.status !== 200){
+            message.error(data.error)
+          }else{
+            message.success("Site created successfully");
+            form.resetFields();
+          }
+        })
 
-      if(updateSiteData.status !== 200){
-        message.error("Une erreur s'est produite");
-      }else{
-        message.success("Site created successfully");
-        form.resetFields();
-      }
     }
 
 
@@ -45,13 +48,18 @@ export const EditSite =  () => {
         })
         .catch((err) => console.error(err.message))
     }
-  }, [searchValue]);
 
+    getSiteById(siteId)
+      .then((data) => {
+        if(data.status !== 200){
+          message.error(data.error)
+        }else{
+          form.setFieldValue("site_name",data.data.site_name)
+          form.setFieldValue("address", data.data.address)
+        }
+      })
 
-  useEffect(()=> {
-
-  },[siteId]);
-
+  }, [searchValue, siteId]);
 
 
   return (
@@ -67,7 +75,7 @@ export const EditSite =  () => {
           name="site_name"
           label="Nom du site"
         >
-          <Input placeholder="Atalian Paris"/>
+          <Input placeholder="Atalian Paris" />
         </Item>
         <div>
           <Item name="address">
