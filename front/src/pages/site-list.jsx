@@ -51,7 +51,7 @@ export const SiteList = () => {
 
     deleteSite(id)
       .then((data) => {
-        setSiteList((prevState) => prevState.filter((s) => s.id !== data._id))
+        setSiteList((prevState) => prevState.filter((s) => s._id !== id))
         message.success('Site supprimé avec succès')
       })
       .catch((error) => {
