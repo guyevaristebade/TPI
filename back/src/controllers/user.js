@@ -1,7 +1,8 @@
 import {User} from "../models/index.js";
 import {passwordValidators} from "../helpers/index.js";
 import bcrypt from "bcryptjs";
-import {sanitizeFilter} from 'mongoose';
+import mongoose, {sanitizeFilter} from 'mongoose';
+import jwt from "jsonwebtoken";
 
 export const register = async (userData) => {
     let response = {
@@ -34,7 +35,7 @@ export const register = async (userData) => {
 
         await newAgent.save();
 
-        response.data = { message: "Register successfully" };
+        response.data = newAgent;
     } catch (e) {
         response.status = 500
         response.error = 'Internal server error'
@@ -66,13 +67,13 @@ export const deleteUser = async (_id) => {
     return response
 };
 
-export const getAllAgents = async (userId) => {
+export const getAllAgents = async (req) => {
     let response = {
         status : 200
     }
 
     try {
-        let agents = await User.find({});
+        let agents = await User.find().sort({ name : 1 });
         
         if(agents && agents.length <= 0){
             response.status = 400
@@ -85,7 +86,7 @@ export const getAllAgents = async (userId) => {
             return agentWithoutPassword;
         });
 
-        response.data = agents.filter(agent => agent._id !== userId)
+        response.data = agents.filter(agent => agent._id.toString() !== req.user._id.toString())
     } catch (e) {
         response.status = 500
         response.error = 'Internal server error'
@@ -94,25 +95,68 @@ export const getAllAgents = async (userId) => {
     return response
 };
 
-export const isLoggedIn = (req, res, next) => {
+export const updateAgent = async (id , userData) =>{
     let response = {
-        status: 200
-    };
-    const useSecureAuth = process.env.NODE_ENV !== 'development';
-
-    if (req.cookies['token-auth']) {
-        res.cookie('token-auth', req.cookies['token-auth'], {
-            maxAge: 31 * 24 * 3600 * 1000,
-            httpOnly: useSecureAuth,
-            secure: useSecureAuth,
-            domain : process.env.COOKIE_DOMAIN,
-            sameSite: "None"
-        });
+        status : 200
     }
 
-    response.data = { agent: req.user, token: req.cookies['token-auth'] };
+    if(!mongoose.isValidObjectId(id)){
+        response.status = 400
+        response.error = 'ID is not valid'
+        return response;
+    }
 
-    return res.status(response.status).send(response.data || response.error);
-};
+    try{
+        const agent = await User.findByIdAndUpdate(id, userData);
+
+        if(!agent){
+            response.status = 400
+            response.error = 'Echec Update'
+            return response;
+        }
+
+        response.data = agent
+
+    } catch (e) {
+        response.status = 500
+        response.error = 'Internal server error'
+    }
+
+    return response
+}
+
+export const getUserById = async (id) =>{
+    let response = {
+        status : 200
+    }
+
+    if(!mongoose.isValidObjectId(id)){
+        response.status = 400
+        response.error = 'ID is not valid'
+        return response;
+    }
+
+    try{
+        let  agent = await User.findById(id,);
+
+        if(!agent){
+            response.status = 400
+            response.error  = "No user found"
+            return response;
+        }
 
 
+
+        response.data = {
+            _id : agent._id,
+            name : agent.name,
+            permissions  : agent.permissions
+        }
+
+    } catch (e) {
+        response.status = 500
+        response.error = 'Internal server error'
+    }
+
+    return response
+}

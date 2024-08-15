@@ -1,5 +1,5 @@
 import express from 'express';
-import {deleteUser, getAllAgents, register} from "../controllers/index.js";
+import {deleteUser, getAllAgents, getUserById, register} from "../controllers/index.js";
 import {authenticated, passwordValidators} from "../helpers/index.js";
 import {User} from "../models/index.js";
 import bcrypt from "bcryptjs";
@@ -12,7 +12,7 @@ userRouter.post('/register', async (req, res) => {
     const userData = req.body;
     const response = await register(userData);
 
-    res.status(response.status).send(response.data || response.error);
+    res.status(response.status).send(response);
 });
 
 userRouter.post('/login', async (req, res) => {
@@ -21,23 +21,25 @@ userRouter.post('/login', async (req, res) => {
     }
 
     if (!req.body.name || !req.body.password) {
-        return res.status(400).send('Username and password are required');
+        response.status = 400
+        response.error = 'Username and password are required'
+        return res.status(response.status).send(response);
     }
 
     try {
         const user = await User.findOne({ name: req.body.name }).exec();
 
         if (!user) {
-            response.error = "Nom / Mot de passe incorrect"
+            response.error = "Nom / Mot de passe  are not available"
             response.status = 401
-            return response;
+            return res.status(response.status).send(response);
         }
 
         const validPass = await bcrypt.compare(req.body.password, user.password);
         if (!validPass) {
-            response.error = "Nom / Mot de passe incorrect"
+            response.error = "Nom / Mot de passe  are not available"
             response.status = 401
-            return response;
+            return res.status(response.status).send(response);
         }
 
         const { password, ...tokenContent } = user.toObject();
@@ -54,18 +56,17 @@ userRouter.post('/login', async (req, res) => {
         });
 
         response.data = { user: tokenContent, token };
+        return res.status(response.status).send(response);
 
     } catch (error) {
         response.error = "Internal server error"
         response.status = 500
+        return res.status(response.status).send(response);
     }
-
-    return res.status(response.status).send(response.data || response.error);
 });
 
 userRouter.get('/users', authenticated,async (req, res) => {
-    const userId = req.user._id
-    const result = await getAllAgents(userId);
+    const result = await getAllAgents(req);
 
     res.status(200).send(result.data  || result.error);
 });
@@ -151,7 +152,11 @@ userRouter.post('/change-password', authenticated, async (req, res) => {
         response.status = 500;
     }
 
-    res.status(response.status).send(response.error || response.data);
+    return  res.status(response.status).send(response.error || response.data);
 });
 
+userRouter.get('/user/:id',authenticated ,async  (req, res) => {
+    const response = await getUserById(req.params.id)
+    res.status(response.status).send(response);
+})
 

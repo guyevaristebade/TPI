@@ -5,7 +5,7 @@ export const login = async (userData) =>{
     const response = await instance.post('/auth/login', userData);
     return response.data;
   }catch(error){
-    return error.message
+    return error.response.data;
   }
 }
 
@@ -32,7 +32,7 @@ export const createUser = async (values) => {
     const response = await instance.post("/auth/register", values)
     return response.data;
   }catch (error) {
-    return error.message
+    return error.response.data
   }
 }
 
@@ -42,7 +42,7 @@ export const getAllUser = async () => {
     const response = await instance.get("/auth/users")
     return response.data
   }catch (error) {
-    return error.message;
+    return error.response.data;
   }
 }
 
@@ -50,6 +50,15 @@ export const getAllUser = async () => {
 export const deleteUser = async (_id) => {
   try {
     const response = await instance.delete(`/auth/${_id}`);
+    return response.data
+  }catch (error) {
+    return error.message
+  }
+}
+
+export const getUserByID =  async (id) =>{
+  try {
+    const response = await instance.get(`/auth/user/${id}`);
     return response.data
   }catch (error) {
     return error.message

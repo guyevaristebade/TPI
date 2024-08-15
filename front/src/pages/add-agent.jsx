@@ -1,23 +1,29 @@
 import React from 'react';
-import {Button, Form, Input, message, Result, Typography} from 'antd'
+import {Button, Form, Input, message, Result, Select, Typography} from 'antd'
 import {createUser} from "../api";
 import {useAuth} from "../hooks";
 const { Item } = Form;
 const { Title } = Typography;
 const { Password} = Input
+const { Option } = Select
+
+
 export const AddAgent = () =>{
 
   const [form] = Form.useForm();
   const {user} = useAuth();
-
   const onFinish = (values) => {
-    const newValues = {...values, permissions : parseInt(values.permissions)}
-    createUser(newValues)
-      .then(() => {
-        message.success("utilisateur enregistré avec succès")
-        form.resetFields();
+    createUser(values)
+      .then((data) => {
+        if(data.status !== 200){
+          message.error(data.error)
+        }else{
+          message.success("User created successfully")
+          form.resetFields();
+        }
       })
       .catch((error) => {
+        console.log("test")
         message.error("Une erreur s'est produite lors de l'enregistrement d'un agent,  " + error)
       })
   }
@@ -26,7 +32,7 @@ export const AddAgent = () =>{
   return (
     <div>
       {
-        user && user.permissions >= 10 ? (
+        user && user.permissions === "administrator" ? (
           <div>
             <Title level={2}>Créer un Utilisateur</Title>
             <Form
@@ -50,10 +56,13 @@ export const AddAgent = () =>{
               </Item>
               <Item
                 name="permissions"
-                label="Permissions"
-                rules={[{ required: true, message: 'Veuillez entrer le mot de passe' }]}
+                label="Rôle"
+                rules={[{ required: true, message: 'Veuillez choisir un rôle' }]}
               >
-                <Input size="large" placeholder="1" type="number"/>
+                <Select placeholder="administrator">
+                  <Option value="administrator">administrator</Option>
+                  <Option value="user">user</Option>
+                </Select>
               </Item>
               <Item>
                 <Button size="large" type="primary" htmlType="submit">Enregistrez</Button>

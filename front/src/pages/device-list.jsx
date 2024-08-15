@@ -13,11 +13,11 @@ export const DeviceList = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  const actionOrNot = user && user.permissions < 10 ? {} : {
+  const actionOrNot = user && user.permissions === "administrator"  ? {} : {
     title: 'Action',
     key: 'action',
     render: (text, record) => (
-      <span style={{ display: 'flex', gap: '20px' }}>
+      <span style={{ display: 'flex', gap: '20px', justifyContent : "center" }}>
         <Popconfirm
           title="Are you sure to delete this device?"
           onConfirm={() => deleteDevice(record._id)}

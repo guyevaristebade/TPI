@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import { MainLayout } from "../components";
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { MainLayout, PrivateRoute } from "../components";
 import {
   EditDevice,
   Dashboard,
@@ -12,35 +12,97 @@ import {
   DeviceList,
   AddAgent,
   AgentList,
-  EditSite
+  EditSite,
+  EditAgent
 } from "../pages";
-import { useAuth } from "../hooks";
 
 export const AppRouter = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user === undefined) {
-      navigate("/login");
-    }
-  }, [user,navigate]);
-
   return (
     <Routes>
-        <Route element={<MainLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="add-site" element={<AddSite />} />
-          <Route path="site-list" element={<SiteList />} />
-          <Route path="edit-site/:siteId" element={<EditSite />} />
-          <Route path="add-pti" element={<AddDevice />} />
-          <Route path="pti-list" element={<DeviceList />} />
-          <Route path="edit-pti/:id" element={<EditDevice />} />
-          <Route path="add-agent" element={<AddAgent />} />
-          <Route path="agent-list" element={<AgentList />} />
-        </Route>
-        <Route path="*" element={<Unknown />} />
-        <Route path="login" element={<Login />} />
+      <Route element={<MainLayout />}>
+        <Route
+          index
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="add-site"
+          element={
+            <PrivateRoute>
+              <AddSite />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="site-list"
+          element={
+            <PrivateRoute>
+              <SiteList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="edit-site/:siteId"
+          element={
+            <PrivateRoute>
+              <EditSite />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="add-pti"
+          element={
+            <PrivateRoute>
+              <AddDevice />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="pti-list"
+          element={
+            <PrivateRoute>
+              <DeviceList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="edit-pti/:id"
+          element={
+            <PrivateRoute>
+              <EditDevice />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="add-agent"
+          element={
+            <PrivateRoute>
+              <AddAgent />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="agent-list"
+          element={
+            <PrivateRoute>
+              <AgentList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="edit-user/:id"
+          element={
+            <PrivateRoute>
+              <EditAgent />
+            </PrivateRoute>
+          }
+        />
+      </Route>
+      <Route path="*" element={<Unknown />} />
+      <Route path="login" element={<Login />} />
     </Routes>
   );
 };

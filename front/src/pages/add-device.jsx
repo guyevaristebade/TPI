@@ -37,7 +37,7 @@ export const AddDevice = () => {
   return (
     <div>
       {
-        user && user.permissions >= 10 ? (
+        user && user.permissions === "administrator"  ? (
           <div>
             <h1>Enregistrez un PTI</h1>
             <Form

@@ -49,7 +49,7 @@ export const AddSite = ({ fetchSites }) => {
   return (
     <div>
       {
-        user && user.permissions >= 10 ? (
+        user && user.permissions === "administrator"  ? (
           <div>
             <h1>Enregistrer un site</h1>
             <Form

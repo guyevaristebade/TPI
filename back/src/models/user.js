@@ -3,17 +3,19 @@ import mongoose from 'mongoose'
 const userSchema = mongoose.Schema(
   {
         name: {
-            type: String,
-            required: true,
-            unique: true
+          type: String,
+          required: true,
+          unique: true
         },
         password: {
-            type: String,
-            required: true,
+          type: String,
+          required: true,
         },
         permissions : {
-            type: Number,
-            required: true
+          type: String,
+          required: true,
+          enum: ['administrator',"user" ],
+          default: 'administrator'
         }
   },
   {

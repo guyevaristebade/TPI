@@ -4,6 +4,8 @@ import {
   login as loginApi,
   logout as logoutApi,
 } from "../api";
+import {message} from "antd";
+import {useNavigate} from "react-router-dom";
 
 export const AuthenticationContext = React.createContext();
 
@@ -13,11 +15,15 @@ export const AuthenticationProvider = ({ children }) => {
   const login =  (userData) => {
     return loginApi(userData)
       .then((data) => {
-        setUser(data.user);
+        if(data.status !== 200){
+          message.error(data.error)
+        }else{
+          setUser(data.data.user);
+        }
       })
       .catch((error) => {
         setUser(undefined);
-        throw error;
+        message.error(error.message)
       });
   };
 
