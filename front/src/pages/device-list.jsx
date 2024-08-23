@@ -13,9 +13,10 @@ export const DeviceList = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  const actionOrNot = user && user.permissions === "administrator"  ? {} : {
+  const actionOrNot = user && user.permissions === "administrator"  ? {
     title: 'Action',
     key: 'action',
+    align : "center",
     render: (text, record) => (
       <span style={{ display: 'flex', gap: '20px', justifyContent : "center" }}>
         <Popconfirm
@@ -31,7 +32,7 @@ export const DeviceList = () => {
         </Link>
       </span>
     ),
-  };
+  } : null;
 
   const fetchDevices = async () => {
     getDevices()
