@@ -50,7 +50,6 @@ export const EditDevice =  () => {
           line: data.line,
           imei: data.imei,
           brand: data.brand,
-          state: data.state
         });
       })
 
@@ -81,12 +80,6 @@ export const EditDevice =  () => {
           </Item>
           <Item name="brand" label="Marque" required>
             <Input />
-          </Item>
-          <Item name="state" label="Etat">
-            <Select placeholder="Choisissez un état">
-              <Option value="Hors service">Hors service</Option>
-              <Option value="En service">En service</Option>
-            </Select>
           </Item>
           <Button type="primary" size="large" htmlType="submit">Modifier</Button>
         </Form>
