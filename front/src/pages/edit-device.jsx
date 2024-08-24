@@ -50,12 +50,8 @@ export const EditDevice =  () => {
           line: data.line,
           imei: data.imei,
           brand: data.brand,
-          date: data.date.split('T')[0],
-          site_id: data.site_id._id,
           state: data.state
         });
-
-        //form.setFieldValue('site_id', data.site_id._id);
       })
 
   },[id]);
@@ -72,36 +68,24 @@ export const EditDevice =  () => {
           onFinish={handlerSubmit}
           layout={"vertical"}
         >
-          <Item name="line" label="Line">
+          <Item name="line" label="Ligne" required>
             <Input />
           </Item>
           <Item
             name="imei"
             label="IMEI"
+            required
             rules={[{required: true, message: 'Veuillez entrer un IMEI Valide'}]}
           >
             <Input type="text" placeholder="123456789012345"/>
           </Item>
-          <Item name="brand" label="Brand">
+          <Item name="brand" label="Marque" required>
             <Input />
           </Item>
-          <Item name="date" label="Date">
-            <Input type="date" />
-          </Item>
-          <Item name="site_id" label="Site">
-            <Select placeholder="Choisissez un site">
-              {sites && sites.map(({ _id, site_name }) => (
-                <Option key={_id} value={_id}>
-                  {site_name}
-                </Option>
-              ))}
-            </Select>
-          </Item>
-          <Item name="state" label="State">
+          <Item name="state" label="Etat">
             <Select placeholder="Choisissez un état">
-              <Option value="tbe">Très bon état</Option>
-              <Option value="be">Bon état</Option>
-              <Option value="edg">Endommagé</Option>
+              <Option value="Hors service">Hors service</Option>
+              <Option value="En service">En service</Option>
             </Select>
           </Item>
           <Button type="primary" size="large" htmlType="submit">Modifier</Button>

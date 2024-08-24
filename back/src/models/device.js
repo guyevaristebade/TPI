@@ -11,17 +11,11 @@ const deviceSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  date: {
-    type: Date,
-    required: true,
-  },
-  site_id: {
-    type: mongoose.Types.ObjectId,
-    ref: 'site'
-  },
   state: {
     type: String,
-    required: true
+    required: true,
+    enum: ['Hors service', 'En service'],
+    default: 'Hors service'
   },
   imei: {
     type: String,

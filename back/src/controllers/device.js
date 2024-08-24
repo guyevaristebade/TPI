@@ -64,7 +64,7 @@ export const getDevices = async () => {
 
 
   try{
-    const devices = await deviceModel.find().populate("site_id");
+    const devices = await deviceModel.find();
 
     if(!devices){
       response.status = 404;
@@ -94,7 +94,7 @@ export const getDeviceById = async (id) =>{
   }
 
   try {
-    const device = await deviceModel.findById(id).populate('site_id');
+    const device = await deviceModel.findById(id);
 
     if(!device){
       response.error = "Device not found";

@@ -63,33 +63,25 @@ export const DeviceList = () => {
 
   const columns = [
     {
-      title: 'Line',
+      title: 'Imei',
+      dataIndex: 'imei',
+      key: 'imei',
+      align: "center"
+    },
+    {
+      title: 'Ligne',
       dataIndex: 'line',
       key: 'line',
       align: "center"
     },
     {
-      title: 'Brand',
+      title: 'Marque',
       dataIndex: 'brand',
       key: 'brand',
       align: "center"
     },
     {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-      align: "center",
-      render: (text) => formatDate(text),
-    },
-    {
-      title: 'Site',
-      dataIndex: 'site_id',
-      key: 'site_id',
-      align: "center",
-      render: (site) => site ? site.site_name : 'N/A',
-    },
-    {
-      title: 'State',
+      title: 'Etat',
       dataIndex: 'state',
       key: 'state',
       align: "center"
@@ -99,10 +91,9 @@ export const DeviceList = () => {
 
   const handleDownloadPDF = () => {
     const pdfData = devices.map(device => [
+      device.imei,
       device.line,
       device.brand,
-      formatDate(device.date),
-      device.site_id.site_name,
       device.state
     ]);
 
@@ -145,12 +136,6 @@ export const DeviceList = () => {
           </div>
         )
       }
-      <div style={{ marginTop: '2rem' }}>
-        <Title level={3}>Remarques :</Title>
-        <p>tbe : très bon état</p>
-        <p>be : bon état</p>
-        <p>edg : endommagé</p>
-      </div>
     </div>
   );
 };

@@ -50,53 +50,21 @@ export const AddDevice = () => {
                 label="Numéro de téléphone"
                 rules={[{required: true, message: 'Veuillez entrer un numéro de téléphone'}]}
               >
-                <Input type="tel" placeholder="+330178675463"/>
+                <Input type="tel" placeholder="+330178675463" size="large"/>
               </Item>
               <Item
                 name="imei"
                 label="IMEI"
                 rules={[{required: true, message: 'Veuillez entrer un IMEI Valide'}]}
               >
-                <Input type="text" placeholder="123456789012345"/>
+                <Input type="text" placeholder="123456789012345" size="large"/>
               </Item>
               <Item
                 name="brand"
                 label="Marque"
                 rules={[{required: true, message: 'Veuillez entrer la marque'}]}
               >
-                <Input placeholder="Brand"/>
-              </Item>
-              <Item
-                name="date"
-                label="Date"
-                size="large"
-                rules={[{required: true, message: 'Veuillez entrer la date'}]}
-              >
-                <Input type="date"/>
-              </Item>
-              <Item
-                name="site_id"
-                label="Site"
-                rules={[{required: true, message: 'Veuillez sélectionner un site'}]}
-              >
-                <Select placeholder="Choisissez un site">
-                  {siteList.map(({_id, site_name}) => (
-                    <Option key={_id} value={_id}>
-                      {site_name}
-                    </Option>
-                  ))}
-                </Select>
-              </Item>
-              <Item
-                name="state"
-                label="État"
-                rules={[{required: true, message: 'Veuillez sélectionner un état'}]}
-              >
-                <Select placeholder="Choisissez un état">
-                  <Option value="tbe">Très bon état</Option>
-                  <Option value="be">Bon état</Option>
-                  <Option value="edg">Endommagé</Option>
-                </Select>
+                <Input placeholder="Brand" size="large"/>
               </Item>
               <Item>
                 <Button type="primary" htmlType="submit">
