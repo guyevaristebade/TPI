@@ -63,6 +63,11 @@ export const SideBar = () => {
           key: 'pti-list',
           icon: <UnorderedListOutlined />,
           label: <Link to='/pti-list'>Liste des pti</Link>,
+        },
+        {
+          key: 'gestion-pti',
+          icon: <MobileOutlined />,
+          label: <Link to='/gestion-pti'>Gestion des appareils</Link>,
         }
       ].filter(item => item !== null)
     },

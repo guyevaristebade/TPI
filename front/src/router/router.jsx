@@ -13,7 +13,8 @@ import {
   AddAgent,
   AgentList,
   EditSite,
-  EditAgent
+  EditAgent,
+  DeviceManagement
 } from "../pages";
 
 export const AppRouter = () => {
@@ -97,6 +98,14 @@ export const AppRouter = () => {
           element={
             <PrivateRoute>
               <EditAgent />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="gestion-pti"
+          element={
+            <PrivateRoute>
+              <DeviceManagement/>
             </PrivateRoute>
           }
         />

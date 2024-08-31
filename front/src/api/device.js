@@ -22,6 +22,17 @@ export const getDevices = async () =>{
   }
 }
 
+export const getOutOfUseDevice = async () =>{
+  try{
+    const response = await instance.get('/device/outofuse');
+    return response.data;
+  }catch (error) {
+    return error.message;
+  }
+}
+
+
+
 
 export const deleteDevice = async (id) =>{
   try{

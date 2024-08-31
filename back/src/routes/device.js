@@ -1,5 +1,12 @@
 import express from 'express';
-import {createDevice, deleteDevice, getDeviceById, getDevices, updateDevice} from "../controllers/index.js";
+import {
+  createDevice,
+  deleteDevice,
+  getDeviceById,
+  getDevices,
+  getOutOfUseDevice,
+  updateDevice
+} from "../controllers/index.js";
 
 export const deviceRouter = express.Router();
 
@@ -30,7 +37,12 @@ deviceRouter.get('/', async (req, res) => {
   const result = await getDevices();
 
   res.status(result.status).send(result)
+});
 
+deviceRouter.get('/outofuse', async (req, res) => {
+  const result = await getOutOfUseDevice();
+
+  res.status(result.status).send(result)
 });
 
 deviceRouter.get('/:id', async (req, res) => {

@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import { connectDB } from './helpers/index.js';
 import {siteRouter, userRouter, deviceRouter, statisticsRouter, searchRouter, fileRouter} from './routes/index.js'
 import axios from "axios";
+import {siteDeviceMappingRouter} from "./routes/siteDeviceMapping.js";
 
 dotenv.config();
 
@@ -39,7 +40,7 @@ app.use('/api/auth', userRouter);
 app.use('/api/device', deviceRouter);
 app.use('/api/statistics', statisticsRouter);
 app.use('/api/search', searchRouter);
-app.use('/api/file', fileRouter);
+app.use("/api/sitedevicemapping",siteDeviceMappingRouter)
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

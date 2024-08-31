@@ -1,4 +1,4 @@
-import {deviceModel, siteModel, User} from "../models/index.js";
+import { deviceModel, siteModel, User } from "../models/index.js";
 
 export const getStatistics = async () => {
   let response = {

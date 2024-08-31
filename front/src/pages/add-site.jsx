@@ -69,7 +69,8 @@ export const AddSite = ({ fetchSites }) => {
               >
                 <Select
                   placeholder="5 square du rouq 77890, Roubaix"
-                  showSearch size="large"
+                  showSearch
+                  size="large"
                   options={selectOptions}
                   onSearch={handleSearch}
                   filterOption={false}

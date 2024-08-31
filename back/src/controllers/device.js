@@ -147,3 +147,29 @@ export const updateDevice = async (id, deviceData) => {
 
   return response;
 };
+
+
+export const getOutOfUseDevice = async () =>{
+  let response = {
+    status: 200
+  };
+
+  try {
+
+    const outOfUseDevice = await deviceModel.find({state : "hors service"})
+
+    if(outOfUseDevice.length === 0) {
+      response.error = []
+      response.status = 404;
+      return response
+    }
+
+    response.data = outOfUseDevice;
+  } catch (error) {
+    response.error = "Internal server error => " + error.message;
+    response.status = 500;
+  }
+
+  return response;
+
+}
