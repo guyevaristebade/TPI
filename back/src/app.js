@@ -4,8 +4,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import { connectDB } from './helpers/index.js';
-import {siteRouter, userRouter, deviceRouter, statisticsRouter, searchRouter, fileRouter} from './routes/index.js'
-import axios from "axios";
+import {siteRouter, userRouter, deviceRouter, addressRouter, assignmentRouter} from './routes/index.js'
 
 dotenv.config();
 
@@ -37,9 +36,8 @@ app.use(bodyParser.json())
 app.use('/api/site', siteRouter);
 app.use('/api/auth', userRouter);
 app.use('/api/device', deviceRouter);
-app.use('/api/statistics', statisticsRouter);
-app.use('/api/search', searchRouter);
-app.use('/api/file', fileRouter);
+app.use('/api/search', addressRouter);
+app.use('/api/assignment', assignmentRouter);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

@@ -6,6 +6,6 @@ export const searchAddress = async (query) => {
     const response = await instance.get(`/search/?q=${query}`);
     return response.data;
   } catch (e) {
-    return e.message;
+    return e.response.data;
   }
 };

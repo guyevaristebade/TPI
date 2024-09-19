@@ -25,14 +25,12 @@ export const EditDevice =  () => {
   const handlerSubmit = (values) => {
 
     updateDevice(id, values)
-      .then((response) => {
-
-        if(response.status !== 200) {
-          message.error("Une erreur s'est produite");
-        }else{
-          message.success("PTI mis à jour avec succès");
+      .then((data) => {
+        if(data.success) {
           form.resetFields();
           navigate("/pti-list")
+        }else{
+          message.error(data.msg);
         }
       })
       .catch((error) => {
@@ -50,6 +48,7 @@ export const EditDevice =  () => {
           line: data.line,
           imei: data.imei,
           brand: data.brand,
+          state: data.state
         });
       })
 
@@ -80,6 +79,13 @@ export const EditDevice =  () => {
           </Item>
           <Item name="brand" label="Marque" required>
             <Input />
+          </Item>
+          <Item name="state" label="Etat" required>
+            <Select>
+              <Option value="Disponible" label="Disponible"/>
+              <Option value="Assigné" label="Assigné"/>
+              <Option value="En maintenance" label="En maintenance"/>
+            </Select>
           </Item>
           <Button type="primary" size="large" htmlType="submit">Modifier</Button>
         </Form>

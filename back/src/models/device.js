@@ -5,7 +5,13 @@ const deviceSchema = mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    match: [/^\+33\d{9,10}$/, "Veuillez entrer un numéro de téléphone valide"]
+    match: [/^\d{9,10}$/, "Veuillez entrer un numéro de téléphone valide"]
+  },
+  imei: {
+    type: String,
+    required: true,
+    unique: true,
+    match: [/^\d{14,16}$/, "Veuillez entrer un numéro IMEI valide de 14 à 16 chiffres"]
   },
   brand: {
     type: String,
@@ -13,18 +19,11 @@ const deviceSchema = mongoose.Schema({
   },
   state: {
     type: String,
-    required: true,
-    enum: ['Hors service', 'En service'],
-    default: 'Hors service'
-  },
-  imei: {
-    type: String,
-    required: true,
-    unique: true,
-    match: [/^\d{14,16}$/, "Veuillez entrer un numéro IMEI valide de 14 à 16 chiffres"]
+    enum: ['Disponible', 'Assigné', 'En maintenance'],
+    default: 'Disponible'
   }
 }, {
   timestamps: true
 });
 
-export const deviceModel = mongoose.model('device', deviceSchema);
+export const Device = mongoose.model('Device', deviceSchema);

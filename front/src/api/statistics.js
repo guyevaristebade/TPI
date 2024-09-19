@@ -5,7 +5,7 @@ export const getStatistics = async ()=>{
     const response = await instance.get('/statistics')
     return response.data;
   }catch(error){
-    return error.message;
+    return error.response.data;
   }
 }
 
@@ -15,6 +15,6 @@ export const getRepartition = async ()=>{
     const response = await instance.get('/statistics/repartition')
     return response.data;
   }catch(error){
-    return error.message;
+    return error.response.data;
   }
 }

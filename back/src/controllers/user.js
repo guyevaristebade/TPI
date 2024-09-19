@@ -1,27 +1,29 @@
 import {User} from "../models/index.js";
 import {passwordValidators} from "../helpers/index.js";
 import bcrypt from "bcryptjs";
-import mongoose, {sanitizeFilter} from 'mongoose';
-import jwt from "jsonwebtoken";
+import mongoose, { sanitizeFilter } from 'mongoose';
 
 export const register = async (userData) => {
     let response = {
-        status : 200
+        status : 201,
+        success : true
     }
 
     try {
-        let agent = await User.findOne(sanitizeFilter({ name: userData.name }));
-        if (agent) {
+        let user = await User.findOne(sanitizeFilter({ name: userData.name }));
+        if (user) {
             response.status = 400
-            response.error = 'Name already exists'
-            return response
+            response.success = false
+            response.msg = 'Ce nom est déjà utilisée, Veuillez choisir un autre'
+            return response;
         }
 
         let validation = passwordValidators(userData.password);
         for (const el of validation) {
             if (!el.validator) {
                 response.status = 400
-                response.error = el.message
+                response.success = false
+                response.msg = el.message
                 return response
             }
         }
@@ -30,79 +32,85 @@ export const register = async (userData) => {
         const newAgent = new User(sanitizeFilter({
             name: userData.name,
             password: hashedPassword,
-            permissions: userData.permissions,
+            role: userData.role,
         }));
 
         await newAgent.save();
 
-        response.data = newAgent;
+        response.msg = "Inscription réussie avec succès";
     } catch (e) {
         response.status = 500
-        response.error = 'Internal server error'
+        response.success = false;
+        response.msg = 'Internal server error'
     }
     return  response;
 };
 
 
 
-export const deleteUser = async (_id) => {
+/**
+ * This function provide to delete a user by ID
+ * @param {String} id user ID to delete
+ * */
+export const deleteUser = async (id) => {
     let response = {
-        status : 200
+        status : 201,
+        success : true
     }
 
     try {
-        const agent = await User.findOneAndDelete(sanitizeFilter({ _id }));
+        const agent = await User.findByIdAndDelete(id);
         if (!agent) {
             response.status = 400
-            response.error = 'User Not found'
+            response.success = false;
+            response.msg = 'Utilisateur introuvable'
             return response
         }
 
-        response.data = { message: "User deleted successfully" };
+        response.data = agent;
 
     } catch (e) {
         response.status = 500
-        response.error = 'Internal server error'
+        response.success = false
+        response.msg = 'Une erreur serveur est survenue, veuillez contacter les développeur'
     }
-    return response
+    return response;
 };
 
 export const getAllAgents = async (req) => {
     let response = {
-        status : 200
+        status : 201,
+        success : true
     }
 
     try {
         let agents = await User.find().sort({ name : 1 });
-        
-        if(agents && agents.length <= 0){
-            response.status = 400
-            response.error = 'Users Not found'
-            return response
-        }
 
-        agents = agents.map(agent => {
+        const agentOwnPassword = agents.map(agent => {
             const { password, ...agentWithoutPassword } = agent.toObject();
             return agentWithoutPassword;
         });
 
-        response.data = agents.filter(agent => agent._id.toString() !== req.user._id.toString())
+        response.data = agentOwnPassword.filter(agent => agent._id.toString() !== req.user._id.toString())
     } catch (e) {
         response.status = 500
-        response.error = 'Internal server error'
+        response.success = false
+        response.msg = 'Une erreur serveur est survenue, veuillez contacter les développeur'
     }
 
-    return response
+    return response;
 };
 
 export const updateAgent = async (id , userData) =>{
     let response = {
-        status : 200
+        status : 201,
+        success : true
     }
 
     if(!mongoose.isValidObjectId(id)){
         response.status = 400
-        response.error = 'ID is not valid'
+        response.success = false
+        response.msg = 'Identifiant invalide '
         return response;
     }
 
@@ -111,7 +119,8 @@ export const updateAgent = async (id , userData) =>{
 
         if(!agent){
             response.status = 400
-            response.error = 'Echec Update'
+            response.success = false
+            response.msg = 'Une erreur s\'est produite lors de la mise à jour'
             return response;
         }
 
@@ -119,7 +128,8 @@ export const updateAgent = async (id , userData) =>{
 
     } catch (e) {
         response.status = 500
-        response.error = 'Internal server error'
+        response.success = false
+        response.msg = 'Une erreur serveur est survenue, veuillez contacter les développeur'
     }
 
     return response
@@ -127,36 +137,34 @@ export const updateAgent = async (id , userData) =>{
 
 export const getUserById = async (id) =>{
     let response = {
-        status : 200
+        status : 201,
+        success : true
     }
 
     if(!mongoose.isValidObjectId(id)){
         response.status = 400
-        response.error = 'ID is not valid'
+        response.success = false
+        response.msg = 'Identifiant invalide '
         return response;
     }
 
     try{
-        let  agent = await User.findById(id,);
+        let  agent = await User.findById(id);
 
         if(!agent){
-            response.status = 400
-            response.error  = "No user found"
+            response.status = 400;
+            response.success = false
+            response.msg  = "Utilisateur introuvable";
             return response;
         }
 
-
-
-        response.data = {
-            _id : agent._id,
-            name : agent.name,
-            permissions  : agent.permissions
-        }
+        response.data = agent;
 
     } catch (e) {
-        response.status = 500
-        response.error = 'Internal server error'
+        response.status = 500;
+        response.success = false
+        response.msg = 'Une erreur serveur est survenue, veuillez contacter les développeur'
     }
 
-    return response
+    return response;
 }

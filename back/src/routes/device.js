@@ -5,36 +5,41 @@ export const deviceRouter = express.Router();
 
 deviceRouter.post('/', async (req, res) => {
   const deviceData = req.body;
-  const result = await createDevice(deviceData)
+  const response = await createDevice(deviceData)
 
-  res.status(result.status).send(result)
+  res.status(response.status).send(response)
 });
 
-deviceRouter.delete('/:id',async (req, res) => {
-  const { id } = req.params
-  const result = await deleteDevice(id)
+deviceRouter.get('/', async (req, res) => {
+  const response = await getDevices();
 
-  res.status(result.status).send(result)
+  res.status(response.status).send(response)
+
 });
+
+
+deviceRouter.get('/:id', async (req, res) => {
+  const response = await getDeviceById(req.params.id);
+  res.status(response.status).send(response)
+});
+
 
 deviceRouter.put('/:id',async (req, res) => {
   const { id } = req.params;
   const deviceData = req.body;
 
-  const result = await updateDevice(id, deviceData);
+  const response = await updateDevice(id, deviceData);
 
-  res.status(result.status).send(result)
+  res.status(response.status).send(response)
 });
 
-deviceRouter.get('/', async (req, res) => {
-  const result = await getDevices();
 
-  res.status(result.status).send(result)
+deviceRouter.delete('/:id',async (req, res) => {
+  const { id } = req.params
+  const response = await deleteDevice(id)
 
+  res.status(response.status).send(response)
 });
 
-deviceRouter.get('/:id', async (req, res) => {
-  const result = await getDeviceById(req.params.id);
-  res.status(result.status).send(result)
 
-});
+

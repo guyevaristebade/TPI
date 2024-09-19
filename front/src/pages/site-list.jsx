@@ -12,12 +12,12 @@ export const SiteList = () => {
 
   const { user } = useAuth();
 
-  const actionOrNot = user && user.permissions < 10 ? {} : {
+  const actionOrNot = user && user.role != "Admin" ? {} : {
     title: 'Action',
     key: 'action',
     align: "center",
     render: (text, record) => (
-      <div style={{ display: 'flex', gap: '20px' }}>
+      <div style={{ display: 'flex', gap: '20px', justifyContent : 'center' }}>
         <Popconfirm
           title="Are you sure to delete this site?"
           onConfirm={() => onDelete(record._id)}
@@ -47,11 +47,11 @@ export const SiteList = () => {
   const onDelete =  (id) => {
     deleteSite(id)
       .then((data) => {
-        if(data.status !== 200){
-          message.error(data.error);
-        }else {
+        if(data.success){
           setSiteList((prevState) => prevState.filter((s) => s._id !== id));
           message.success('Site supprimé avec succès');
+        }else {
+          message.error(data.error);
         }
       })
   };
@@ -59,8 +59,8 @@ export const SiteList = () => {
   const columns = [
     {
       title: 'Nom du site',
-      dataIndex: 'site_name',
-      key: 'site_name',
+      dataIndex: 'name',
+      key: 'name',
       align: "center",
     },
     {
@@ -69,21 +69,28 @@ export const SiteList = () => {
       key: 'address',
       align: "center",
     },
+    {
+      title: 'Manager du site',
+      dataIndex: 'manager',
+      key: 'manager',
+      align: "center",
+    },
     actionOrNot,
   ];
 
   const handleDownloadPDF = () => {
     const pdfData = siteList.map(site => [
-      site.site_name,
-      site.address
+      site.name,
+      site.address,
+      site.manager
     ]);
 
     generatePDF({
       title: "Liste des Sites",
-      headers: ['Nom du site', 'Adresse'],
+      headers: ['Nom du site', 'Adresse','Manager du site'],
       data: pdfData,
       footerText: user.name,
-      fileName: 'liste_des_sites.pdf'
+      fileName: 'informations_des_sites.pdf'
     });
   };
 

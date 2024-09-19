@@ -1,29 +1,33 @@
-import { deviceModel, siteModel } from "../models/index.js";
+import {Assignment, Site} from "../models/index.js";
 import mongoose,{ sanitizeFilter } from 'mongoose'
 
 export const createSite = async (siteData) => {
     let response = {
-      status : 200
+      status : 201,
+      success : true
     }
 
   try {
-    let site = await siteModel.findOne(sanitizeFilter({ site_name: siteData.site_name}));
+    let site = await Site.findOne(sanitizeFilter({ name: siteData.name }));
 
     if (site){
-      response.error = "The site already exists";
       response.status = 400;
+      response.success = false;
+      response.msg = "Un site Avec ce nom existe déjà";
       return response;
     }
 
-    const saveSite = new siteModel(siteData);
+    const saveSite = new Site(siteData);
 
     await saveSite.save();
 
     response.data =  saveSite
+    response.msg = "Site créé avec succès"
 
   } catch (error) {
-    response.error = `Internal server Error : ${error.message}`;
     response.status = 500
+    response.success = false;
+    response.msg = `Internal server Error : ${error.message}`;
   }
 
   return response;
@@ -31,43 +35,46 @@ export const createSite = async (siteData) => {
 
 
 /**
- * Cette fonction permet de supprimer un site
- * Elle supprime aussi le ou les PTI associé au site
+ * Cette fonction permet de supprimer un site via son id
+ * Elle supprime également les données liées aux site dans la table Assignment
+ *
  * */
 export const deleteSite = async (id) => {
 
   let response = {
-    status : 200
+    status : 201,
+    success : true
   }
 
-  if(!mongoose.isValidObjectId(id)){
-    response.status = 400
-    response.error = 'ID is not valid'
-    return response
-  }
 
   try {
-    const siteToDelete = await siteModel.findById(id);
 
-    if (!siteToDelete) {
-      response.status = 404
-      response.error = 'Site not found'
-      return response
+    if(!mongoose.isValidObjectId(id)){
+      response.status = 400;
+      response.success = false
+      response.msg = 'Identifiant invalide ';
+      return response;
     }
 
-    const deviceToDelete = await deviceModel.findOne({ site_id: id });
+    const siteDeleted = await Site.findByIdAndDelete(id);
 
-    if (!deviceToDelete) {
-      await siteModel.findByIdAndDelete(id);
-    }else{
-      await deviceModel.findByIdAndDelete(deviceToDelete.id);
-      await siteModel.findByIdAndDelete(id);
+    if (!siteDeleted) {
+      response.status = 404;
+      response.success = false
+      response.msg = 'Le site n\'existe pas ';
+      return response;
     }
 
-    response.data = siteToDelete
+    const assignmentsDeleted = await Assignment.find({ site: id });
 
+    if(assignmentsDeleted){
+      await Assignment.deleteMany({ site: id })
+    }
+
+    response.msg = "Site supprimé avec succès"
   } catch (error) {
-    response.error = `Internal server Error : ${error.message}`;
+    response.msg = `Une erreur serveur produite veuillez contacter le développeur `;
+    response.success = false
     response.status = 500
   }
 
@@ -76,24 +83,20 @@ export const deleteSite = async (id) => {
 
 
 export const getSites = async () => {
-  
+
   let response = {
-    status : 200,
+    status : 201,
+    success : true
   }
   
   try {
-    const sites = await siteModel.find().sort({ site_name: 1 });
+    const sites = await Site.find().sort({ name: 1 });
 
-    if(!sites) {
-      response.error = "No sites found";
-      response.status = 404;
-      return response;
-    }
-    
     response.data = sites
 
   } catch (error) {
-    response.error = `Internal server Error : ${error.message}`;
+    response.msg = `Internal server Error : ${error.message}`;
+    response.success = false
     response.status = 500;
   }
   return response;
@@ -102,32 +105,38 @@ export const getSites = async () => {
 
 export const updateSite = async (id, siteData) => {
   let response = {
-    status : 200,
+    status : 201,
+    success : true
   }
   
+
+  try {
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      response.error = 'Invalid or missing site ID';
+      response.msg = 'Identifiant invalide';
+      response.success = false
       response.status = 400;
       return response
     }
-    
-  try {
 
-    const updatedSite = await siteModel.findByIdAndUpdate(
+    const updatedSite = await Site.findByIdAndUpdate(
       id,
       siteData,
       { new: true }
     );
 
     if (!updatedSite) {
-      response.error = 'Site not found '
+      response.msg = 'Une erreur s\'est produite lors de la mise à jour '
+      response.success = false;
       response.status = 404;
       return response
     }
 
     response.data = updatedSite
+
   } catch (error) {
-    response.error = `Internal server Error : ${error.message}`;
+    response.msg = `Internal server Error : ${error.message}`;
+    response.success = false;
     response.status = 500;
   }
   return response;
@@ -137,27 +146,33 @@ export const updateSite = async (id, siteData) => {
 export const getSiteById = async (id) => {
 
   let response = {
-    status : 200,
+    status : 201,
+    success : true
   }
 
-  if(!mongoose.isValidObjectId(id)){
-    response.error = `ID is not a valid`;
-    response.status = 400;
-    return response;
-  }
 
   try{
-    const site = await siteModel.findById(id);
+
+    if(!mongoose.isValidObjectId(id)){
+      response.msg = 'Identifiant invalide ';
+      response.success = false
+      response.status = 400;
+      return response;
+    }
+
+    const site = await Site.findById(id);
 
     if(!site){
-      response.error = `Site not found`;
+      response.msg = `Site introuvable`;
+      response.success = false
       response.status = 404;
       return response;
     }
 
     response.data = site
   }catch (e) {
-    response.error = `Internal server Error : ${e.message}`;
+    response.msg = `Internal server Error : ${e.message}`;
+    response.success = false
     response.status = 500;
   }
   return response;

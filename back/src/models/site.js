@@ -1,16 +1,27 @@
 import mongoose from 'mongoose';
 
 const siteSchema = mongoose.Schema({
-  site_name : {
+  name: {
     type: String,
     required: true,
+    trim: true
   },
-  address : {
+  address: {
     type: String,
     required: true,
-  }
+    trim: true
+  },
+  manager: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  devices: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Device'
+  }],
 },{
   timestamps : true
 });
 
-export const siteModel = mongoose.model('site',siteSchema);
+export const Site = mongoose.model('Site',siteSchema);

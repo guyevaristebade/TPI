@@ -17,28 +17,91 @@ userRouter.post('/register', async (req, res) => {
 
 userRouter.post('/login', async (req, res) => {
     let response = {
-        status : 200
-    }
+        status: 200,
+        success: true,
+    };
 
-    if (!req.body.name || !req.body.password) {
-        response.status = 400
-        response.error = 'Username and password are required'
-        return res.status(response.status).send(response);
-    }
+    const { password, name } = req.body;
 
     try {
+        // Vérification des champs requis
+        if (!name || !password) {
+            response.status = 400;
+            response.success = false;
+            response.msg = 'Veuillez remplir tous les champs avant la validation';
+            return res.status(response.status).send(response);
+        }
+
+        // Vérification si l'utilisateur existe
+        const user = await User.findOne({ name }).exec();
+        if (!user) {
+            response.status = 401;
+            response.success = false;
+            response.msg = "Utilisateur introuvable";
+            return res.status(response.status).send(response);
+        }
+
+        // Comparaison des mots de passe
+        const validPass = await bcrypt.compare(password, user.password);
+        if (!validPass) {
+            response.status = 401;
+            response.success = false;
+            response.msg = "Mot de passe invalide";
+            return res.status(response.status).send(response);
+        }
+
+        // Génération du token et suppression du mot de passe des données
+        const { password: _, ...tokenContent } = user.toObject();
+        const token = jwt.sign(tokenContent, process.env.SECRET_KEY || '');
+
+        // Envoi du token dans un cookie sécurisé
+        res.cookie('token', token, {
+            maxAge: 31 * 24 * 3600 * 1000, // 1 mois
+            httpOnly: true,
+            secure: useSecureAuth,
+            domain: process.env.COOKIE_DOMAIN,
+            sameSite: 'None',
+        });
+
+        response.data = { user: tokenContent, token };
+        return res.status(response.status).send(response);
+    } catch (error) {
+        response.status = 500;
+        response.success = false;
+        response.msg = `Erreur serveur : ${error.message}`;
+        return res.status(response.status).send(response);
+    }
+});
+
+/*userRouter.post('/login', async (req, res) => {
+    let response = {
+        status : 200,
+        success : true
+    }
+
+    const {  password, name }  = req.body
+
+    try {
+        if (!req.body.name || !req.body.password) {
+            response.status = 400
+            response.success = false
+            response.msg = 'Veuillez remplir tous les champs avant la validation'
+            return res.status(response.status).send(response);
+        }
         const user = await User.findOne({ name: req.body.name }).exec();
 
         if (!user) {
-            response.error = "Nom / Mot de passe  are not available"
             response.status = 401
+            response.success = false
+            response.msg = "Utilisateur Introuvable"
             return res.status(response.status).send(response);
         }
 
         const validPass = await bcrypt.compare(req.body.password, user.password);
         if (!validPass) {
-            response.error = "Nom / Mot de passe  are not available"
             response.status = 401
+            response.success = false
+            response.msg = "Mot de passe  invalide"
             return res.status(response.status).send(response);
         }
 
@@ -56,19 +119,21 @@ userRouter.post('/login', async (req, res) => {
         });
 
         response.data = { user: tokenContent, token };
+
         return res.status(response.status).send(response);
 
     } catch (error) {
-        response.error = "Internal server error"
         response.status = 500
+        response.success = false
+        response.msg = 'Une erreur serveur est survenue, veuillez contacter les développeurs ' + error.message
         return res.status(response.status).send(response);
     }
-});
+});*/
 
 userRouter.get('/users', authenticated,async (req, res) => {
-    const result = await getAllAgents(req);
+    const response = await getAllAgents(req);
 
-    res.status(200).send(result.data  || result.error);
+    res.status(200).send(response);
 });
 
 userRouter.get('/is-logged-in', authenticated, async (req, res) => {
@@ -82,7 +147,7 @@ userRouter.get('/is-logged-in', authenticated, async (req, res) => {
         response.data = { user: req.user, token };
     }
 
-    res.status(response.status).send(response.data || response.error);
+    res.status(response.status).send(response);
 });
 
 userRouter.delete('/logout', authenticated, (req, res) => {
@@ -94,15 +159,18 @@ userRouter.delete('/logout', authenticated, (req, res) => {
         sameSite: 'None'
     });
 
-    res.status(200).send({ message: 'Disconnected' });
+    res.status(200).send("Déconnexion");
 });
 
 
-userRouter.delete('/:_id', authenticated, async (req, res) => {
-    const { _id } = req.params;
-    const result = await deleteUser(_id);
-
-    res.status(200).json({ message: result.message });
+userRouter.delete('/:id', authenticated, async (req, res) => {
+    if(req.user.role === "Admin"){
+        const { id } = req.params;
+        const response = await deleteUser(id);
+        res.status(response.status).send(response);
+    }else{
+        res.status(400).send({msg : " Vous n'avez pas le droit d'effectuer cette action"})
+    }
 });
 
 userRouter.post('/change-password', authenticated, async (req, res) => {

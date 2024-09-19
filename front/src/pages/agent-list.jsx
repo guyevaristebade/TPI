@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Typography, message, Popconfirm, Table} from 'antd'
+import {Button, Typography, message, Popconfirm, Table, Empty} from 'antd'
 import {deleteUser, getAllUser} from "../api";
-import {DeleteFilled, EditFilled} from "@ant-design/icons";
+import {DeleteFilled, EditFilled, PlusOutlined} from "@ant-design/icons";
 import {useAuth} from "../hooks";
 import {Link} from "react-router-dom";
 
@@ -21,7 +21,7 @@ export const AgentList = () =>{
       })
   }
 
-  const actionOrNot = user && user.permissions === "administrator"   ? {
+  const actionOrNot = user && user.role === "Admin"   ? {
     title: 'Action',
     key: 'action',
     align: "center",
@@ -45,21 +45,15 @@ export const AgentList = () =>{
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'key',
-      key: 'key',
-      align: "center",
-    },
-    {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
       align: "center",
     },
     {
-      title: 'Permissions',
-      dataIndex: 'permissions',
-      key: 'permissions',
+      title: 'Role',
+      dataIndex: 'role',
+      key: 'role',
       align: "center",
     },
     actionOrNot
@@ -67,19 +61,17 @@ export const AgentList = () =>{
 
   const fetchUsers = () => {
     getAllUser()
-      .then((u) => {
-        setUsers(u)
+      .then((data) => {
+        if(data.success){
+          setUsers(data.data)
+        }else{
+          setUsers(data.data);
+        }
       })
       .catch((err) => {
         message.error(err)
       })
   };
-
-
-  const usersWithIds = users === [] ? [] : users.map((user, index) => ({
-    ...user,
-    key: index + 1,
-  }));
 
   useEffect(() => {
     fetchUsers();
@@ -89,7 +81,14 @@ export const AgentList = () =>{
   return (
     <div>
       <Title level={2}>Liste des Agents</Title>
-      <Table columns={columns} dataSource={usersWithIds} />
+      {
+        users.length === 0 ?
+          (
+            <Empty description={<Title level={4}>La liste des PTI est vide</Title>} />
+          ) : (
+            <Table columns={columns} dataSource={users} />
+          )
+      }
     </div>
   )
 }

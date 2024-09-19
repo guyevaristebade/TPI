@@ -1,9 +1,9 @@
 import axios from "axios";
 import express from "express";
 
-export const searchRouter = express.Router();
+export const addressRouter = express.Router();
 
-searchRouter.get('/', async (req, res) => {
+addressRouter.get('/', async (req, res) => {
   const query = req.query.q;
   try {
     const response = await axios.get(`https://api-adresse.data.gouv.fr/search/?q=${query}`, {

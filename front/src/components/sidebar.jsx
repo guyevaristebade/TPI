@@ -5,7 +5,7 @@ import {
   UserAddOutlined,
   UserOutlined,
   UnorderedListOutlined,
-  BankOutlined
+  BankOutlined, BookOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
@@ -37,7 +37,7 @@ export const SideBar = () => {
       icon: <BankOutlined />,
       label: "Site",
       children: [
-        user && user.permissions.includes("administrator") ? {
+        user && user.role.includes("Admin") ? {
           key: 'add-site',
           icon: <PlusOutlined />,
           label: <Link to='/add-site'>Ajouter un site</Link>,
@@ -52,9 +52,9 @@ export const SideBar = () => {
     {
       key: 'pti',
       icon: <MobileOutlined />,
-      label: "PTI",
+      label: "Appareil",
       children: [
-        user && user.permissions.includes("administrator") ? {
+        user && user.role.includes("Admin") ? {
           key: 'add-pti',
           icon: <PlusOutlined />,
           label: <Link to='/add-pti'>Ajouter des pti</Link>,
@@ -67,11 +67,28 @@ export const SideBar = () => {
       ].filter(item => item !== null)
     },
     {
-      key: '4',
+      key: 'assignment',
+      icon: <BookOutlined />,
+      label: "Gestion des attributions",
+      children: [
+        user && user.role.includes("Admin") ? {
+          key: 'assignment',
+          icon: <PlusOutlined />,
+          label: <Link to='/assignment'>Attribuer un Appareil</Link>,
+        } : null,
+        {
+          key: 'assignment-list',
+          icon: <UnorderedListOutlined />,
+          label: <Link to='/assignment-list'>Liste des attributions</Link>,
+        }
+      ].filter(item => item !== null)
+    },
+    {
+      key: 'users',
       icon: <UserOutlined />,
       label: "Utilisateur",
       children: [
-        user && user.permissions.includes("administrator") ? {
+        user && user.role.includes("Admin") ? {
           key: 'add-agent',
           icon: <UserAddOutlined />,
           label: <Link to='/add-agent'>Créer des utilisateurs</Link>

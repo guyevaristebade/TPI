@@ -53,6 +53,6 @@ export const updateSite = async (id, siteData) =>{
     const response = await instance.put(`/site/${id}`,siteData);
     return response.data;
   }catch (error){
-    return error;
+    return error.response.data;
   }
 }

@@ -6,18 +6,17 @@ const { Item } = Form
 
 export const AddSite = ({ fetchSites }) => {
   const [form] = Form.useForm();
-  const { user } = useAuth();
   const [selectOptions, setSelectOptions] = useState({})
   const [searchValue, setSearchValue] = useState("")
 
   const onFinish = async (values) => {
     createSite(values)
       .then((data) =>{
-        if(data.status !== 200){
-          message.error(data.error)
-        }else{
-          message.success("Site created successfully");
+        if(data.success){
+          message.success(data.msg);
           form.resetFields();
+        }else{
+          message.error(data.msg)
         }
       })
   };
@@ -48,44 +47,45 @@ export const AddSite = ({ fetchSites }) => {
 
   return (
     <div>
-      {
-        user && user.permissions === "administrator"  ? (
-          <div>
-            <h1>Enregistrer un site</h1>
-            <Form
-              form={form}
-              onFinish={onFinish}
-              layout="vertical"
-            >
-              <Item
-                name="site_name"
-                label="Nom du site"
-                rules={[{required: true, message: 'Veuillez entrer le nom du site'}]}
-              >
-                <Input placeholder="Atalian Paris" size="large"/>
-              </Item>
-              <Item
-                name="address"
-              >
-                <Select
-                  placeholder="5 square du rouq 77890, Roubaix"
-                  showSearch size="large"
-                  options={selectOptions}
-                  onSearch={handleSearch}
-                  filterOption={false}
-                />
-              </Item>
-              <Item>
-                <Button type="primary" htmlType="submit">
-                  Enregistrer
-                </Button>
-              </Item>
-            </Form>
-          </div>
-        ) : (
-          <Result status="warning" title="Vous n'avez pas les droits nécessaires"/>
-        )
-      }
+      <h1>Enregistrer un site</h1>
+      <Form
+        form={form}
+        onFinish={onFinish}
+        layout="vertical"
+      >
+        <Item
+          name="name"
+          label="Nom du site"
+          rules={[{required: true, message: 'Veuillez entrer le nom du site'}]}
+        >
+          <Input placeholder="Atalian Paris" size="large"/>
+        </Item>
+        <Item
+          name="address"
+          label="Adresse du site"
+          rules={[{required: true, message: 'Veuillez entrer l\'adresse du site'}]}
+        >
+          <Select
+            placeholder="5 square du rouq 77890, Roubaix"
+            showSearch size="large"
+            options={selectOptions}
+            onSearch={handleSearch}
+            filterOption={false}
+          />
+        </Item>
+        <Item
+          name="manager"
+          label="Responsable du site"
+          rules={[{required: true, message: 'Veuillez entrer le du responsable du site '}]}
+        >
+          <Input placeholder="Julien Maxime" size="large"/>
+        </Item>
+        <Item>
+          <Button type="primary" htmlType="submit">
+            Enregistrer
+          </Button>
+        </Item>
+      </Form>
     </div>
   );
 };

@@ -12,14 +12,14 @@ export const EditAgent = () =>{
   const { id } = useParams();
 
   const onFinish = (values) => {
-    /*createUser(values)
+    createUser(values)
       .then(() => {
         message.success("utilisateur enregistré avec succès")
         form.resetFields();
       })
       .catch((error) => {
         message.error("Une erreur s'est produite lors de l'enregistrement d'un agent,  " + error)
-      })*/
+      })
   }
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export const EditAgent = () =>{
         }else{
           form.setFieldsValue({
             name : data.name,
-            permissions : data.permissions
+            role : data.role,
           })
         }
       })
@@ -61,7 +61,7 @@ export const EditAgent = () =>{
           <Password placeholder="**********" size="large" visibilityToggle/>
         </Item>
         <Item
-          name="permissions"
+          name="role"
           label="Rôle"
           rules={[{ required: true, message: 'Veuillez choisir un rôle' }]}
         >

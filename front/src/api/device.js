@@ -9,7 +9,7 @@ export const createDevice = async (deviceData) =>{
     const response = await instance.post('/device', deviceData);
     return response.data;
   }catch (error) {
-    return error.message;
+    return error.response.data;
   }
 }
 
@@ -18,7 +18,7 @@ export const getDevices = async () =>{
     const response = await instance.get('/device');
     return response.data;
   }catch (error) {
-    return error.message;
+    return error.response.data;
   }
 }
 
@@ -28,7 +28,7 @@ export const deleteDevice = async (id) =>{
     const response = await instance.delete(`/device/${id}`);
     return response.data;
   }catch (error) {
-    return error.message;
+    return error.response.data;
   }
 }
 
@@ -37,6 +37,6 @@ export const updateDevice = async (id, data) =>{
     const response = await instance.put(`/device/${id}`, data);
     return response.data;
   }catch (error) {
-    return error.message;
+    return error.response.data;
   }
 }

@@ -1,30 +1,41 @@
-import { deviceModel } from "../models/index.js";
+import {Assignment, Device} from "../models/index.js";
 import mongoose, { sanitizeFilter }  from "mongoose";
 
 
+/**
+ * Cette fonction permet de créer un appareil
+ * elle vérifie si le numéro de série est éjà présent dans bd
+ * si oui elle renvoie un message d'erreur
+ * sinon elle enregistre l'appareil
+ * */
 export const createDevice = async (deviceData) => {
   let response = {
-    status : 200
+    status : 201,
+    success : true
   }
 
   try {
 
-    const existingDevice = await deviceModel.findOne(sanitizeFilter({ line: deviceData.line, imei : deviceData.imei })).exec();
+    const existingDevice = await Device.findOne({ imei : deviceData.imei });
 
     if (existingDevice) {
       response.status = 400;
-      response.error = "A device with the same line or same imei already exists"
+      response.success = false
+      response.msg = "Un appareil avec ce numéro de série existe déjà"
       return response;
     }
 
-    const device = new deviceModel(deviceData);
+    const device = new Device(deviceData);
 
     await device.save();
 
     response.data = device;
+    response.msg = "Appareil enregistré avec succès"
+
   } catch (error) {
     response.status = 500;
-    response.error = "Internal Server error "
+    response.success = false
+    response.msg = 'Une erreur serveur est survenue, veuillez contacter les développeurs'
   }
 
   return response;
@@ -32,25 +43,31 @@ export const createDevice = async (deviceData) => {
 
 
 
-export const deleteDevice = async (deviceId) => {
+export const deleteDevice = async (id) => {
   let response = {
-    status: 200
-  };
+    status : 201,
+    success : true
+  }
 
   try {
-    const deletedDevice = await deviceModel.findByIdAndDelete(sanitizeFilter(deviceId));
+    const deletedDevice = await Device.findByIdAndDelete(id);
 
     if (!deletedDevice) {
       response.status = 404;
-      response.error = 'Device not found'
+      response.success = false
+      response.msg = "Appareil introuvable, suppression échoué"
       return response;
     }
 
+    await Assignment.findOneAndDelete({device : id})
+
     response.data = deletedDevice
+    response.msg = "Appareil supprimé avec succès"
 
   } catch (error) {
-    response.error = "Internal server error => " + error.message;
     response.status = 500;
+    response.success = false
+    response.msg = 'Une erreur serveur est survenue, veuillez contacter les développeur'
   }
 
   return response;
@@ -59,23 +76,19 @@ export const deleteDevice = async (deviceId) => {
 export const getDevices = async () => {
 
   let response = {
-    status: 200
+    status: 201,
+    success : true
   };
 
 
   try{
-    const devices = await deviceModel.find();
-
-    if(!devices){
-      response.status = 404;
-      response.error = 'Device not found';
-      return response;
-    }
+    const devices = await Device.find();
 
     response.data = devices;
 
   } catch (error) {
-    response.error = "Internal server error => " + error.message;
+    response.msg = 'Une erreur serveur est survenue, veuillez contacter les développeur'
+    response.success = false
     response.status = 500;
   }
 
@@ -84,28 +97,35 @@ export const getDevices = async () => {
 
 export const getDeviceById = async (id) =>{
   let response = {
-    status: 200
+    status: 201,
+    success: true
   };
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    response.error = "Invalid or missing device ID";
-    response.status = 400;
-    return response;
-  }
 
   try {
-    const device = await deviceModel.findById(id);
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      response.status = 400;
+      response.success = false
+      response.msg = "Identifiant invalide";
+      return response;
+    }
+
+    const device = await Device.findById(id);
 
     if(!device){
-      response.error = "Device not found";
       response.status = 404;
+      response.success = false
+      response.msg = "Appareil introuvable";
       return response;
     }
 
     response.data = device
+
   }catch (error) {
-    response.error = "Internal server error => " + error.message;
     response.status = 500;
+    response.success = false
+    response.msg = 'Une erreur serveur est survenue, veuillez contacter les développeur'
   }
 
   return response;
@@ -115,25 +135,28 @@ export const getDeviceById = async (id) =>{
 export const updateDevice = async (id, deviceData) => {
 
   let response = {
-    status: 200
+    status: 201,
+    success : true
   };
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    response.error = "Invalid or missing device ID";
-    response.status = 400;
-    return response;
-  }
 
   try {
 
-    const updatedDevice = await deviceModel.findByIdAndUpdate(
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      response.msg = "Identifiant invalide ";
+      response.success = false
+      response.status = 400;
+      return response;
+    }
+    const updatedDevice = await Device.findByIdAndUpdate(
       id,
       deviceData,
       { new: true }
     );
 
     if (!updatedDevice) {
-      response.error = "Bad request device not updated";
+      response.msg = "Appareil introuvable ";
+      response.success = false
       response.status = 400;
       return response;
     }
@@ -141,7 +164,8 @@ export const updateDevice = async (id, deviceData) => {
     response.data = updatedDevice;
 
   } catch (error) {
-    response.error = "Internal server error => " + error.message;
+    response.msg = 'Une erreur serveur est survenue, veuillez contacter les développeur'
+    response.success = false
     response.status = 500;
   }
 

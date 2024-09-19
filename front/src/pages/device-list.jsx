@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, message, Popconfirm, Empty, Typography } from 'antd';
+import {Table, Button, message, Popconfirm, Empty, Typography, Tag} from 'antd';
 import { getDevices, deleteDevice as deleteDeviceApi } from '../api';
 import { formatDate, generatePDF } from "../helpers";
 import { DeleteFilled, EditFilled, PlusOutlined } from "@ant-design/icons";
@@ -13,7 +13,7 @@ export const DeviceList = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  const actionOrNot = user && user.permissions === "administrator"  ? {
+  const actionOrNot = user && user.role === "Admin"  ? {
     title: 'Action',
     key: 'action',
     align : "center",
@@ -36,23 +36,23 @@ export const DeviceList = () => {
 
   const fetchDevices = async () => {
     getDevices()
-      .then(({ data, status, error }) =>{
-        if(status !== 200){
-          message.error(error)
+      .then((data) =>{
+        if(data.success){
+          setDevices(data.data)
         }else{
-          setDevices(data)
+          message.error(data.msg)
         }
       })
   };
 
   const deleteDevice = (id) => {
     deleteDeviceApi(id)
-      .then(({ data, status, error }) =>{
-        if(status !== 200){
-          message.error(error)
-        }else{
+      .then((data) =>{
+        if(data.success){
           setDevices((prevState) => prevState.filter((dev) => dev._id !== id))
-          message.success("Device deleted successfully")
+          message.success(data.msg)
+        }else{
+          message.error(data.msg)
         }
       })
   };
@@ -61,9 +61,27 @@ export const DeviceList = () => {
     fetchDevices();
   }, []);
 
+  const renderDeviceState = (state) => {
+    let color;
+    switch (state) {
+      case 'Disponible':
+        color = 'green';
+        break;
+      case 'Assigné':
+        color = 'red';
+        break;
+      case 'En maintenance':
+        color = 'orange';
+        break;
+      default:
+        color = 'blue';
+    }
+    return <Tag color={color}>{state.toUpperCase()}</Tag>;
+  };
+
   const columns = [
     {
-      title: 'Imei',
+      title: 'N° imei',
       dataIndex: 'imei',
       key: 'imei',
       align: "center"
@@ -84,8 +102,10 @@ export const DeviceList = () => {
       title: 'Etat',
       dataIndex: 'state',
       key: 'state',
-      align: "center"
-    },
+      align: "center",
+      render: (state) => renderDeviceState(state)
+
+},
     actionOrNot
   ];
 
@@ -99,7 +119,7 @@ export const DeviceList = () => {
 
     generatePDF({
       title: "Liste des Sites",
-      headers: ['Numéro', 'Marque', 'Date de mise en service', 'Site', 'État'],
+      headers: ['Numéro', 'Ligne', 'Marque', 'État'],
       data: pdfData,
       footerText: user.name,
       fileName: 'liste_des_pti.pdf'
@@ -112,9 +132,9 @@ export const DeviceList = () => {
       {
         devices.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '5rem' }}>
-            <Empty description="La liste des PTI est vide" />
+            <Empty description={<Title level={4}>La liste des PTI est vide</Title>} />
             <Button icon={<PlusOutlined />} type="primary">
-              <Link to="/ajout-pti">Ajoutez un PTI</Link>
+              <Link to="/add-pti">Ajoutez un PTI</Link>
             </Button>
           </div>
         ) : (

@@ -13,8 +13,9 @@ import {
   AddAgent,
   AgentList,
   EditSite,
-  EditAgent
+  EditAgent, AssignmentList
 } from "../pages";
+import {Assignment} from "../pages/add-assignment";
 
 export const AppRouter = () => {
   return (
@@ -97,6 +98,22 @@ export const AppRouter = () => {
           element={
             <PrivateRoute>
               <EditAgent />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="assignment"
+          element={
+            <PrivateRoute>
+              <Assignment />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="assignment-list"
+          element={
+            <PrivateRoute>
+              <AssignmentList />
             </PrivateRoute>
           }
         />

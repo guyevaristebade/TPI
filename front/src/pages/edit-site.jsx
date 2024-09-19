@@ -18,11 +18,11 @@ export const EditSite =  () => {
 
       updateSite(siteId,values)
         .then((data) =>{
-          if(data.status !== 200){
-            message.error(data.error)
-          }else{
+          if(data.success){
             message.success("Site created successfully");
             form.resetFields();
+          }else{
+            message.error(data.error)
           }
         })
 
@@ -51,11 +51,12 @@ export const EditSite =  () => {
 
     getSiteById(siteId)
       .then((data) => {
-        if(data.status !== 200){
-          message.error(data.error)
-        }else{
-          form.setFieldValue("site_name",data.data.site_name)
+        if(data.success){
+          form.setFieldValue("name",data.data.name)
           form.setFieldValue("address", data.data.address)
+          form.setFieldValue("manager", data.data.manager)
+        }else{
+          message.error(data.msg);
         }
       })
 
@@ -72,13 +73,17 @@ export const EditSite =  () => {
         layout="vertical"
       >
         <Item
-          name="site_name"
+          name="name"
           label="Nom du site"
         >
           <Input placeholder="Atalian Paris" />
         </Item>
         <div>
-          <Item name="address">
+          <Item
+            name="address"
+            label="Adresse du site"
+            rules={[{required: true, message: 'Veuillez entrer l\'adresse du site'}]}
+          >
             <Select
               placeholder="5 square du rouq 77890, Roubaix"
               showSearch size="large"
@@ -86,6 +91,13 @@ export const EditSite =  () => {
               onSearch={handleSearch}
               filterOption={false}
             />
+          </Item>
+          <Item
+            name="manager"
+            label="Responsable du site"
+            rules={[{required: true, message: 'Veuillez entrer le du responsable du site '}]}
+          >
+            <Input placeholder="Julien Maxime" size="large"/>
           </Item>
         </div>
         <Item>
