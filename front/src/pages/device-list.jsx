@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {Table, Button, message, Popconfirm, Empty, Typography, Tag} from 'antd';
 import { getDevices, deleteDevice as deleteDeviceApi } from '../api';
-import { formatDate, generatePDF } from "../helpers";
+import { generatePDF } from "../helpers";
 import { DeleteFilled, EditFilled, PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks";
@@ -32,7 +32,7 @@ export const DeviceList = () => {
         </Link>
       </span>
     ),
-  } : null;
+  } : {};
 
   const fetchDevices = async () => {
     getDevices()
@@ -104,8 +104,7 @@ export const DeviceList = () => {
       key: 'state',
       align: "center",
       render: (state) => renderDeviceState(state)
-
-},
+    },
     actionOrNot
   ];
 

@@ -2,42 +2,42 @@
 export const passwordValidators = (password) => [
     {
         validator: password !== undefined,
-        message: 'Password is required',
+        message: 'Mot de passe necéssaire',
     },
     {
         validator: password?.length >= 8,
-        message: 'Password must be at least 8 characters long',
+        message: 'Le mot de passe doit contenir au moins 8 caractères',
     },
     {
         validator: /[a-z]/g.test(password),
-        message: 'Password must contain at least one lowercase letter',
+        message: 'Le mot de passe doit contenir au moins 1 caractère minuscule',
     },
     {
         validator: /[A-Z]/g.test(password),
-        message: 'Password must contain at least one uppercase letter',
+        message: 'Le mot de passe doit contenir au moins 1 caractère majuscule',
     },
     {
         validator: /[0-9]/g.test(password),
-        message: 'Password must contain at least one number',
+        message: 'Le mot de passe doit contenir au moins 1 caractère numérique',
     },
     {
         validator: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/g.test(password),
-        message: 'Password must contain at least one special character',
+        message: 'Le mot de passe doit contenir au moins 1 caractère spécial : !@#$%^&*()_+-=[]{};/?',
     },
 ]
 
 export const confirmationValidators = (password, confirmation) => [
     {
         validator: confirmation !== undefined,
-        message: 'Confirmation is required',
+        message: 'Confirmation du mot de passe requise',
     },
     {
         validator: confirmation === password,
-        message: 'Password and confirmation are not the same',
+        message: 'Les mots de passe ne sont pas identique',
     },
 ]
 
-export const invoiceFileFilter = (file) => {
+/*export const invoiceFileFilter = (file) => {
 
     const authorizedFileType = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp']
 
@@ -49,4 +49,4 @@ export const invoiceFileFilter = (file) => {
     }
 
     return { status : 200, data : "authorizedFileType"}
-}
+}*/
